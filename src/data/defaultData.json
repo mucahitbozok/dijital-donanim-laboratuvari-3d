@@ -1,0 +1,936 @@
+{
+  "schemaVersion": "1.0",
+  "app": {
+    "name": "Dijital Donanım Laboratuvarı",
+    "brand": "ÖĞRETMEN BOZOK",
+    "target": "5. sınıf Bilişim Teknolojileri ve Yazılım",
+    "mode": "smartboard-touch-first"
+  },
+  "learningLoop": [
+    "Döndür",
+    "Yaklaştır",
+    "Hotspot'a dokun",
+    "Bilgiyi oku",
+    "Soruyu cevapla",
+    "Görevi tamamla"
+  ],
+  "contentNotes": {
+    "quiz": "Sorular not vermek için değil, öğrenmeyi pekiştirmek için kullanılmalıdır.",
+    "3d": "model3d alanı GLB/GLTF dosya yolu veya URL'si ile doldurulabilir.",
+    "teacherEditing": "Öğretmen panelinden içerikler daha sonra düzenlenebilir."
+  },
+  "hardware": [
+    {
+      "id": "cpu",
+      "name": "İşlemci (CPU)",
+      "category": "İşlem",
+      "model3d": "/models/cpu.glb",
+      "shortDescription": "Bilgisayarın komutları işleyen temel bileşenidir.",
+      "function": "Programlardan gelen komutları işler ve hesaplamalar yapar.",
+      "location": "Anakart üzerindeki işlemci yuvasına (CPU soketi) takılır.",
+      "importantInfo": "İşlemcinin performansı çekirdek sayısı, saat hızı ve mimarisi gibi özelliklerle ilişkilidir.",
+      "summary": "CPU, bilgisayarın işlemleri gerçekleştirmesinde merkezi rol oynar.",
+      "hotspots": [
+        {
+          "id": "core",
+          "label": "İşlemci çekirdeği",
+          "info": "Komutların işlenmesinde görev alan işlem birimleridir.",
+          "position": [
+            0,
+            0.25,
+            0
+          ]
+        },
+        {
+          "id": "contacts",
+          "label": "Bağlantı yüzeyi",
+          "info": "İşlemcinin anakartla elektriksel bağlantısını sağlar.",
+          "position": [
+            0,
+            -0.25,
+            0
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Bilgisayarda komutları işleyen temel bileşen hangisidir?",
+          "options": [
+            "RAM",
+            "CPU",
+            "Kasa",
+            "Hoparlör"
+          ],
+          "answer": 1,
+          "explanation": "CPU, komutların işlenmesinde merkezi görev üstlenir."
+        },
+        {
+          "question": "CPU genellikle nereye takılır?",
+          "options": [
+            "Anakart üzerindeki CPU soketine",
+            "Monitöre",
+            "Klavyeye",
+            "Yazıcıya"
+          ],
+          "answer": 0,
+          "explanation": "İşlemci anakart üzerindeki uygun CPU soketine yerleştirilir."
+        },
+        {
+          "question": "CPU'nun temel görevi nedir?",
+          "options": [
+            "Ses üretmek",
+            "Komutları işlemek",
+            "Görüntüyü duvara yansıtmak",
+            "Kağıda baskı yapmak"
+          ],
+          "answer": 1,
+          "explanation": "CPU komutları işler ve hesaplamalar gerçekleştirir."
+        }
+      ],
+      "missions": [
+        "CPU'yu 3 farklı açıdan incele.",
+        "CPU'nun anakart üzerindeki yerini bul.",
+        "Bir CPU hotspot'una dokun ve görevini açıkla."
+      ]
+    },
+    {
+      "id": "ram",
+      "name": "RAM",
+      "category": "Bellek",
+      "model3d": "/models/ram.glb",
+      "shortDescription": "Bilgisayarın o anda kullandığı verileri geçici olarak tutan bellektir.",
+      "function": "Çalışan programların ve verilerin hızlı erişilebilen geçici bellekte tutulmasını sağlar.",
+      "location": "Anakart üzerindeki RAM yuvalarına takılır.",
+      "importantInfo": "RAM geçicidir; bilgisayar kapandığında RAM'deki veriler korunmaz.",
+      "summary": "RAM, çalışan programların ihtiyaç duyduğu verilere hızlı erişim sağlar.",
+      "hotspots": [
+        {
+          "id": "module",
+          "label": "RAM modülü",
+          "info": "Verilerin geçici olarak tutulduğu bellek modülüdür.",
+          "position": [
+            0.6,
+            0.2,
+            0.08
+          ]
+        },
+        {
+          "id": "contacts",
+          "label": "Bağlantı uçları",
+          "info": "RAM'in anakartla iletişim kurmasını sağlar.",
+          "position": [
+            0,
+            -0.65,
+            0
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "RAM'in temel özelliği hangisidir?",
+          "options": [
+            "Geçici bellek olması",
+            "Kağıda baskı yapması",
+            "Ses üretmesi",
+            "İnterneti sağlaması"
+          ],
+          "answer": 0,
+          "explanation": "RAM, geçici çalışma belleğidir."
+        },
+        {
+          "question": "RAM nereye takılır?",
+          "options": [
+            "RAM yuvasına",
+            "USB kablosuna",
+            "Monitör ayağına",
+            "Yazıcı tepsisine"
+          ],
+          "answer": 0,
+          "explanation": "RAM modülleri anakart üzerindeki RAM yuvalarına takılır."
+        },
+        {
+          "question": "Bilgisayar kapandığında RAM'deki veriler genellikle ne olur?",
+          "options": [
+            "Kalıcı olarak saklanır",
+            "Silinir",
+            "Yazıcıya gönderilir",
+            "Buluta aktarılır"
+          ],
+          "answer": 1,
+          "explanation": "RAM uçucu/geçici bir bellektir."
+        }
+      ],
+      "missions": [
+        "RAM modülünü döndür.",
+        "RAM yuvasını anakart üzerinde bul.",
+        "RAM'in neden 'geçici bellek' olduğunu söyle."
+      ]
+    },
+    {
+      "id": "gpu",
+      "name": "Ekran Kartı (GPU)",
+      "category": "Görüntü",
+      "shortDescription": "Görüntülerin işlenmesine yardımcı olan donanımdır.",
+      "function": "Grafik ve görüntü hesaplamalarını gerçekleştirir.",
+      "location": "Harici ekran kartları genellikle anakart üzerindeki PCIe yuvasına takılır.",
+      "importantInfo": "Bazı bilgisayarlarda grafik işlemleri işlemci içindeki entegre grafik birimi tarafından da gerçekleştirilebilir.",
+      "summary": "GPU, özellikle grafik ağırlıklı işlemlerde önemli rol oynar.",
+      "hotspots": [
+        {
+          "id": "chip",
+          "label": "Grafik işlem birimi",
+          "info": "Grafik hesaplamalarının gerçekleştirildiği ana işlem birimidir.",
+          "position": [
+            0,
+            0.2,
+            0.2
+          ]
+        },
+        {
+          "id": "fan",
+          "label": "Soğutma",
+          "info": "GPU çalışırken oluşan ısının uzaklaştırılmasına yardımcı olur.",
+          "position": [
+            -0.8,
+            0,
+            0.4
+          ]
+        },
+        {
+          "id": "ports",
+          "label": "Görüntü çıkışları",
+          "info": "Monitör gibi görüntü aygıtlarına bağlantı sağlamak için kullanılır.",
+          "position": [
+            -1.8,
+            0,
+            -0.2
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "GPU en çok hangi işlemlerle ilişkilidir?",
+          "options": [
+            "Grafik ve görüntü işlemleri",
+            "Kağıt kesme",
+            "Klavye temizliği",
+            "Elektrik üretimi"
+          ],
+          "answer": 0,
+          "explanation": "GPU grafik işlemlerinde önemli görev üstlenir."
+        },
+        {
+          "question": "Harici ekran kartı genellikle hangi yuvaya takılır?",
+          "options": [
+            "PCIe",
+            "RAM",
+            "SATA güç düğmesi",
+            "Ses jakı"
+          ],
+          "answer": 0,
+          "explanation": "Harici ekran kartları yaygın olarak PCIe yuvasını kullanır."
+        },
+        {
+          "question": "Ekran kartındaki fanın amacı nedir?",
+          "options": [
+            "Soğutmaya yardımcı olmak",
+            "İnternet sağlamak",
+            "Veri depolamak",
+            "Ses kaydetmek"
+          ],
+          "answer": 0,
+          "explanation": "Fan, oluşan ısının uzaklaştırılmasına yardımcı olur."
+        }
+      ],
+      "missions": [
+        "GPU üzerindeki görüntü çıkışlarını bul.",
+        "Soğutma fanını göster.",
+        "GPU'nun hangi tür işlemlerde önemli olduğunu söyle."
+      ]
+    },
+    {
+      "id": "motherboard",
+      "name": "Anakart",
+      "category": "Ana Donanım",
+      "shortDescription": "Bilgisayarın birçok donanım bileşenini bir araya getiren ana devre kartıdır.",
+      "function": "Donanımların birbirleriyle iletişim kurmasını ve bağlantılarını sağlar.",
+      "location": "Bilgisayar kasasının içinde bulunur.",
+      "importantInfo": "CPU, RAM, depolama ve çeşitli genişleme bileşenleri anakart üzerinden bağlanabilir.",
+      "summary": "Anakart, bilgisayar bileşenlerinin birbirine bağlandığı temel platformdur.",
+      "hotspots": [
+        {
+          "id": "cpu_socket",
+          "label": "CPU soketi",
+          "info": "İşlemcinin takıldığı bölümdür.",
+          "position": [
+            -0.5,
+            0.15,
+            -0.4
+          ]
+        },
+        {
+          "id": "ram_slots",
+          "label": "RAM yuvaları",
+          "info": "RAM modüllerinin takıldığı yuvalardır.",
+          "position": [
+            0.6,
+            0.15,
+            -0.4
+          ]
+        },
+        {
+          "id": "pcie",
+          "label": "PCIe yuvaları",
+          "info": "Ekran kartı gibi bazı genişleme kartlarının bağlandığı yuvalardır.",
+          "position": [
+            0,
+            0.15,
+            0.5
+          ]
+        },
+        {
+          "id": "m2",
+          "label": "M.2 yuvası",
+          "info": "Uyumlu M.2 SSD'lerin bağlanabildiği bağlantı noktasıdır.",
+          "position": [
+            0.1,
+            0.15,
+            0.1
+          ]
+        },
+        {
+          "id": "sata",
+          "label": "SATA bağlantıları",
+          "info": "Uyumlu depolama aygıtlarının bağlanmasında kullanılır.",
+          "position": [
+            1.2,
+            0.15,
+            0.7
+          ]
+        },
+        {
+          "id": "power",
+          "label": "Güç bağlantıları",
+          "info": "Anakartın güç kaynağıyla bağlantısını sağlar.",
+          "position": [
+            1.2,
+            0.15,
+            -0.8
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "Anakartın temel görevlerinden biri nedir?",
+          "options": [
+            "Donanımların bağlantısını sağlamak",
+            "Sadece ses üretmek",
+            "Sadece yazı yazmak",
+            "Kağıt kesmek"
+          ],
+          "answer": 0,
+          "explanation": "Anakart, birçok bileşenin bağlanmasını ve iletişim kurmasını sağlar."
+        },
+        {
+          "question": "RAM hangi bölümle doğrudan ilişkilidir?",
+          "options": [
+            "RAM yuvaları",
+            "Hoparlör",
+            "Yazıcı tepsisi",
+            "Web kamera lensi"
+          ],
+          "answer": 0,
+          "explanation": "RAM modülleri anakart üzerindeki RAM yuvalarına takılır."
+        },
+        {
+          "question": "CPU anakart üzerinde nereye yerleştirilir?",
+          "options": [
+            "CPU soketine",
+            "SATA kablosuna",
+            "USB belleğe",
+            "Ses jakına"
+          ],
+          "answer": 0,
+          "explanation": "CPU için anakart üzerinde özel bir soket bulunur."
+        }
+      ],
+      "missions": [
+        "CPU soketini bul.",
+        "RAM yuvalarını say.",
+        "Bir PCIe yuvasını göster.",
+        "M.2 ve SATA bağlantılarının yerini keşfet."
+      ]
+    },
+    {
+      "id": "ssd",
+      "name": "SSD",
+      "category": "Depolama",
+      "shortDescription": "Verileri kalıcı olarak saklayan hızlı bir depolama birimidir.",
+      "function": "İşletim sistemi, uygulamalar ve dosyalar gibi verileri kalıcı olarak saklar.",
+      "location": "2,5 inç SATA SSD'ler SATA bağlantılarıyla; M.2 SSD'ler anakart üzerindeki M.2 yuvasıyla bağlanabilir.",
+      "importantInfo": "SSD'lerde hareketli mekanik disk bulunmaz; bu, HDD'den farklı temel özelliklerinden biridir.",
+      "summary": "SSD, kalıcı depolama için kullanılan hızlı bir donanımdır.",
+      "hotspots": [
+        {
+          "id": "controller",
+          "label": "Denetleyici",
+          "info": "SSD içindeki veri işlemlerinin yönetilmesine yardımcı olan bileşendir.",
+          "position": [
+            -0.4,
+            0.15,
+            0
+          ]
+        },
+        {
+          "id": "nand",
+          "label": "NAND bellek",
+          "info": "Verilerin kalıcı olarak saklandığı flash bellek alanıdır.",
+          "position": [
+            0.4,
+            0.15,
+            0
+          ]
+        },
+        {
+          "id": "interface",
+          "label": "Bağlantı",
+          "info": "SSD'nin bilgisayara veri aktarımı için kullandığı bağlantı arayüzüdür.",
+          "position": [
+            -1.2,
+            0,
+            0
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "SSD'nin temel görevi nedir?",
+          "options": [
+            "Veri depolamak",
+            "Ses üretmek",
+            "Görüntü çekmek",
+            "Klavye komutlarını fiziksel olarak üretmek"
+          ],
+          "answer": 0,
+          "explanation": "SSD kalıcı veri depolama için kullanılır."
+        },
+        {
+          "question": "SSD'yi HDD'den ayıran özelliklerden biri nedir?",
+          "options": [
+            "Hareketli mekanik disk içermemesi",
+            "Mutlaka monitöre takılması",
+            "Sadece ses kaydetmesi",
+            "RAM olması"
+          ],
+          "answer": 0,
+          "explanation": "SSD, flash bellek tabanlıdır ve HDD'deki gibi dönen mekanik plakalar kullanmaz."
+        },
+        {
+          "question": "M.2 SSD nereye takılabilir?",
+          "options": [
+            "Anakart üzerindeki M.2 yuvasına",
+            "Hoparlöre",
+            "Klavye tuşuna",
+            "Yazıcı kağıt haznesine"
+          ],
+          "answer": 0,
+          "explanation": "Uyumlu M.2 SSD'ler anakart üzerindeki M.2 yuvasına takılır."
+        }
+      ],
+      "missions": [
+        "SSD'yi döndür ve bağlantı bölümünü bul.",
+        "M.2 SSD ile SATA SSD arasındaki fiziksel farkı incele.",
+        "SSD'nin hangi tür verileri saklayabileceğini söyle."
+      ]
+    },
+    {
+      "id": "hdd",
+      "name": "Sabit Disk (HDD)",
+      "category": "Depolama",
+      "shortDescription": "Verileri manyetik plakalar üzerinde kalıcı olarak saklayan depolama birimidir.",
+      "function": "Dosyaları ve diğer verileri kalıcı olarak depolar.",
+      "location": "Masaüstü bilgisayarlarda genellikle kasa içindeki sürücü bölmesine yerleştirilir.",
+      "importantInfo": "HDD, verileri dönen manyetik plakalar üzerinde saklar ve hareketli mekanik parçalara sahiptir.",
+      "summary": "HDD, bilgisayarlarda kullanılan geleneksel kalıcı depolama teknolojilerinden biridir.",
+      "hotspots": [
+        {
+          "id": "platter",
+          "label": "Manyetik plakalar",
+          "info": "Verilerin manyetik olarak saklandığı dönen disk yüzeyleridir.",
+          "position": [
+            0.3,
+            0.15,
+            -0.2
+          ]
+        },
+        {
+          "id": "head",
+          "label": "Okuma/yazma kafası",
+          "info": "Plakalar üzerindeki verilerin okunması ve yazılmasına yardımcı olur.",
+          "position": [
+            -0.5,
+            0.15,
+            0.4
+          ]
+        },
+        {
+          "id": "interface",
+          "label": "SATA bağlantısı",
+          "info": "Uyumlu HDD'lerde bilgisayarla veri ve güç bağlantısı için kullanılan bağlantılar bulunur.",
+          "position": [
+            -1.2,
+            -0.1,
+            0.5
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "HDD verileri hangi yapı üzerinde saklar?",
+          "options": [
+            "Manyetik plakalar",
+            "RAM çipleri",
+            "Hoparlör konisi",
+            "Kamera lensi"
+          ],
+          "answer": 0,
+          "explanation": "HDD manyetik plakalar üzerinde veri saklar."
+        },
+        {
+          "question": "HDD'nin içinde hareketli parçalar var mıdır?",
+          "options": [
+            "Evet",
+            "Hayır",
+            "Sadece yazılımda",
+            "Sadece klavyede"
+          ],
+          "answer": 0,
+          "explanation": "HDD'de dönen plakalar ve hareket eden okuma/yazma kafası bulunur."
+        },
+        {
+          "question": "HDD'nin temel görevi nedir?",
+          "options": [
+            "Kalıcı veri depolamak",
+            "Görüntü üretmek",
+            "Ses kaydetmek",
+            "İnternet yayını yapmak"
+          ],
+          "answer": 0,
+          "explanation": "HDD kalıcı veri depolama amacıyla kullanılır."
+        }
+      ],
+      "missions": [
+        "HDD'nin plakalarını keşfet.",
+        "Okuma/yazma kafasını bul.",
+        "HDD ile SSD arasındaki temel fiziksel farkı söyle."
+      ]
+    },
+    {
+      "id": "psu",
+      "name": "Güç Kaynağı (PSU)",
+      "category": "Güç",
+      "shortDescription": "Bilgisayar bileşenlerine uygun elektrik gücünü sağlayan donanımdır.",
+      "function": "Şebekeden gelen elektriği bilgisayar bileşenlerinin kullanabileceği biçimde dönüştürür ve dağıtır.",
+      "location": "Masaüstü bilgisayar kasasının içinde bulunur.",
+      "importantInfo": "PSU, işlemci, ekran kartı, anakart ve depolama gibi bileşenlere güç sağlayan bağlantılara sahiptir.",
+      "summary": "PSU, bilgisayarın bileşenlerinin çalışması için gerekli elektrik gücünün sağlanmasında görev alır.",
+      "hotspots": [
+        {
+          "id": "fan",
+          "label": "Soğutma fanı",
+          "info": "Güç kaynağının soğutulmasına yardımcı olur.",
+          "position": [
+            0,
+            0.8,
+            0
+          ]
+        },
+        {
+          "id": "connectors",
+          "label": "Güç kabloları",
+          "info": "Farklı bilgisayar bileşenlerine güç aktarılmasını sağlar.",
+          "position": [
+            1.1,
+            0,
+            0
+          ]
+        },
+        {
+          "id": "switch",
+          "label": "Güç anahtarı",
+          "info": "Bazı masaüstü PSU'larında bulunan fiziksel açma/kapama anahtarıdır.",
+          "position": [
+            -1.1,
+            0,
+            0
+          ]
+        }
+      ],
+      "questions": [
+        {
+          "question": "PSU'nun temel görevi nedir?",
+          "options": [
+            "Bileşenlere elektrik gücü sağlamak",
+            "Dosya yazmak",
+            "Görüntü çekmek",
+            "Metin yazmak"
+          ],
+          "answer": 0,
+          "explanation": "PSU, bilgisayar bileşenlerinin ihtiyaç duyduğu elektrik gücünü sağlar."
+        },
+        {
+          "question": "PSU genellikle nerede bulunur?",
+          "options": [
+            "Kasa içinde",
+            "Monitör ekranının içinde",
+            "Mouse tekerleğinde",
+            "Yazıcı kağıdında"
+          ],
+          "answer": 0,
+          "explanation": "Masaüstü bilgisayarlarda PSU kasa içinde yer alır."
+        },
+        {
+          "question": "PSU neden gereklidir?",
+          "options": [
+            "Donanımların elektrikle çalışabilmesi için",
+            "Sadece internete bağlanmak için",
+            "Sadece yazı yazmak için",
+            "Sadece ses kaydetmek için"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayar bileşenleri çalışmak için uygun elektrik gücüne ihtiyaç duyar."
+        }
+      ],
+      "missions": [
+        "PSU üzerindeki bağlantıları incele.",
+        "Fanı bul.",
+        "PSU'nun bilgisayarın hangi ihtiyacını karşıladığını açıkla."
+      ]
+    },
+    {
+      "id": "cpu_cooler",
+      "name": "İşlemci Soğutucusu",
+      "category": "Soğutma",
+      "shortDescription": "İşlemciden gelen ısının uzaklaştırılmasına yardımcı olur.",
+      "function": "İşlemciden gelen ısının uzaklaştırılmasına yardımcı olur.",
+      "location": "CPU üzerine/CPU soketi çevresine monte edilir.",
+      "importantInfo": "",
+      "summary": "İşlemciden gelen ısının uzaklaştırılmasına yardımcı olur.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "case",
+      "name": "Kasa",
+      "category": "Ana Donanım",
+      "shortDescription": "Bilgisayarın iç bileşenlerini korur ve bir arada tutar.",
+      "function": "Bilgisayarın iç bileşenlerini korur ve bir arada tutar.",
+      "location": "İç bileşenlerin tamamı kasa içinde yer alır.",
+      "importantInfo": "",
+      "summary": "Bilgisayarın iç bileşenlerini korur ve bir arada tutar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "keyboard",
+      "name": "Klavye",
+      "category": "Giriş",
+      "shortDescription": "Yazı, sayı ve komutların bilgisayara girilmesini sağlar.",
+      "function": "Yazı, sayı ve komutların bilgisayara girilmesini sağlar.",
+      "location": "Bilgisayara USB veya kablosuz bağlantıyla bağlanabilir.",
+      "importantInfo": "",
+      "summary": "Yazı, sayı ve komutların bilgisayara girilmesini sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "mouse",
+      "name": "Fare",
+      "category": "Giriş",
+      "shortDescription": "Ekrandaki işaretçiyi kontrol etmeyi sağlar.",
+      "function": "Ekrandaki işaretçiyi kontrol etmeyi sağlar.",
+      "location": "Bilgisayara USB veya kablosuz bağlantıyla bağlanabilir.",
+      "importantInfo": "",
+      "summary": "Ekrandaki işaretçiyi kontrol etmeyi sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "microphone",
+      "name": "Mikrofon",
+      "category": "Giriş",
+      "shortDescription": "Sesi bilgisayara aktaran giriş aygıtıdır.",
+      "function": "Sesi bilgisayara aktaran giriş aygıtıdır.",
+      "location": "USB, ses jakı veya kablosuz bağlantı kullanabilir.",
+      "importantInfo": "",
+      "summary": "Sesi bilgisayara aktaran giriş aygıtıdır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "webcam",
+      "name": "Web Kamera",
+      "category": "Giriş",
+      "shortDescription": "Görüntüyü bilgisayara aktaran giriş aygıtıdır.",
+      "function": "Görüntüyü bilgisayara aktaran giriş aygıtıdır.",
+      "location": "USB veya dahili bağlantıyla bilgisayara bağlanabilir.",
+      "importantInfo": "",
+      "summary": "Görüntüyü bilgisayara aktaran giriş aygıtıdır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "scanner",
+      "name": "Tarayıcı",
+      "category": "Giriş",
+      "shortDescription": "Kâğıt üzerindeki belge veya görselleri dijital ortama aktarmaya yarar.",
+      "function": "Kâğıt üzerindeki belge veya görselleri dijital ortama aktarmaya yarar.",
+      "location": "Genellikle USB veya ağ bağlantısı kullanır.",
+      "importantInfo": "",
+      "summary": "Kâğıt üzerindeki belge veya görselleri dijital ortama aktarmaya yarar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "gamepad",
+      "name": "Oyun Kumandası",
+      "category": "Giriş",
+      "shortDescription": "Oyunlarda kontrol komutları vermek için kullanılır.",
+      "function": "Oyunlarda kontrol komutları vermek için kullanılır.",
+      "location": "USB veya kablosuz bağlantı kullanabilir.",
+      "importantInfo": "",
+      "summary": "Oyunlarda kontrol komutları vermek için kullanılır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "touchscreen",
+      "name": "Dokunmatik Ekran",
+      "category": "Giriş/Çıkış",
+      "shortDescription": "Dokunma yoluyla etkileşim sağlar ve görüntü gösterir.",
+      "function": "Dokunma yoluyla etkileşim sağlar ve görüntü gösterir.",
+      "location": "Monitör veya cihaz ekranının parçasıdır.",
+      "importantInfo": "",
+      "summary": "Dokunma yoluyla etkileşim sağlar ve görüntü gösterir.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "monitor",
+      "name": "Monitör",
+      "category": "Çıkış",
+      "shortDescription": "Bilgisayarın görüntüsünü kullanıcıya gösterir.",
+      "function": "Bilgisayarın görüntüsünü kullanıcıya gösterir.",
+      "location": "Bilgisayara görüntü kablosuyla bağlanır.",
+      "importantInfo": "",
+      "summary": "Bilgisayarın görüntüsünü kullanıcıya gösterir.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "printer",
+      "name": "Yazıcı",
+      "category": "Çıkış",
+      "shortDescription": "Dijital belgeleri fiziksel çıktıya dönüştürür.",
+      "function": "Dijital belgeleri fiziksel çıktıya dönüştürür.",
+      "location": "USB veya ağ üzerinden bağlanabilir.",
+      "importantInfo": "",
+      "summary": "Dijital belgeleri fiziksel çıktıya dönüştürür.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "speaker",
+      "name": "Hoparlör",
+      "category": "Çıkış",
+      "shortDescription": "Sesleri kullanıcıya iletir.",
+      "function": "Sesleri kullanıcıya iletir.",
+      "location": "Kablo veya kablosuz bağlantıyla bağlanabilir.",
+      "importantInfo": "",
+      "summary": "Sesleri kullanıcıya iletir.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "headphones",
+      "name": "Kulaklık",
+      "category": "Çıkış",
+      "shortDescription": "Sesi kullanıcıya iletir.",
+      "function": "Sesi kullanıcıya iletir.",
+      "location": "Kablo veya kablosuz bağlantı kullanabilir.",
+      "importantInfo": "",
+      "summary": "Sesi kullanıcıya iletir.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "projector",
+      "name": "Projeksiyon",
+      "category": "Çıkış",
+      "shortDescription": "Görüntüyü büyük bir yüzeye yansıtır.",
+      "function": "Görüntüyü büyük bir yüzeye yansıtır.",
+      "location": "Bilgisayar veya başka görüntü kaynağına bağlanır.",
+      "importantInfo": "",
+      "summary": "Görüntüyü büyük bir yüzeye yansıtır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "usb_flash",
+      "name": "USB Bellek",
+      "category": "Depolama",
+      "shortDescription": "Dosyaları taşımak ve saklamak için kullanılan taşınabilir depolama aygıtıdır.",
+      "function": "Dosyaları taşımak ve saklamak için kullanılan taşınabilir depolama aygıtıdır.",
+      "location": "USB portuna bağlanır.",
+      "importantInfo": "",
+      "summary": "Dosyaları taşımak ve saklamak için kullanılan taşınabilir depolama aygıtıdır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "external_hdd",
+      "name": "Harici HDD",
+      "category": "Depolama",
+      "shortDescription": "Verileri harici olarak saklamak ve taşımak için kullanılır.",
+      "function": "Verileri harici olarak saklamak ve taşımak için kullanılır.",
+      "location": "Genellikle USB üzerinden bağlanır.",
+      "importantInfo": "",
+      "summary": "Verileri harici olarak saklamak ve taşımak için kullanılır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "external_ssd",
+      "name": "Harici SSD",
+      "category": "Depolama",
+      "shortDescription": "Hızlı taşınabilir veri depolama sağlar.",
+      "function": "Hızlı taşınabilir veri depolama sağlar.",
+      "location": "Genellikle USB üzerinden bağlanır.",
+      "importantInfo": "",
+      "summary": "Hızlı taşınabilir veri depolama sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "memory_card",
+      "name": "Hafıza Kartı",
+      "category": "Depolama",
+      "shortDescription": "Fotoğraf, video ve dosya gibi verileri saklar.",
+      "function": "Fotoğraf, video ve dosya gibi verileri saklar.",
+      "location": "Uyumlu kart yuvasına veya kart okuyucuya takılır.",
+      "importantInfo": "",
+      "summary": "Fotoğraf, video ve dosya gibi verileri saklar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "ethernet_card",
+      "name": "Ethernet Kartı",
+      "category": "Ağ",
+      "shortDescription": "Kablolu ağ bağlantısı sağlar.",
+      "function": "Kablolu ağ bağlantısı sağlar.",
+      "location": "Anakart üzerinde dahili olabilir veya genişleme kartı olarak takılabilir.",
+      "importantInfo": "",
+      "summary": "Kablolu ağ bağlantısı sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "wifi_adapter",
+      "name": "Wi-Fi Adaptörü",
+      "category": "Ağ",
+      "shortDescription": "Kablosuz ağlara bağlanmayı sağlar.",
+      "function": "Kablosuz ağlara bağlanmayı sağlar.",
+      "location": "USB veya dahili genişleme/donanım olarak bulunabilir.",
+      "importantInfo": "",
+      "summary": "Kablosuz ağlara bağlanmayı sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "modem",
+      "name": "Modem",
+      "category": "Ağ",
+      "shortDescription": "İnternet hizmeti ile yerel ağ arasındaki bağlantıda görev alır.",
+      "function": "İnternet hizmeti ile yerel ağ arasındaki bağlantıda görev alır.",
+      "location": "İnternet hattı ve ağ cihazlarıyla bağlantı kurar.",
+      "importantInfo": "",
+      "summary": "İnternet hizmeti ile yerel ağ arasındaki bağlantıda görev alır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "router",
+      "name": "Yönlendirici",
+      "category": "Ağ",
+      "shortDescription": "Ağlar arasında veri paketlerinin yönlendirilmesine ve yerel ağın oluşturulmasına yardımcı olur.",
+      "function": "Ağlar arasında veri paketlerinin yönlendirilmesine ve yerel ağın oluşturulmasına yardımcı olur.",
+      "location": "Modem ve yerel ağ cihazlarıyla bağlantı kurar.",
+      "importantInfo": "",
+      "summary": "Ağlar arasında veri paketlerinin yönlendirilmesine ve yerel ağın oluşturulmasına yardımcı olur.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "switch",
+      "name": "Ağ Anahtarı",
+      "category": "Ağ",
+      "shortDescription": "Aynı yerel ağdaki cihazların kablolu olarak birbirine bağlanmasını sağlar.",
+      "function": "Aynı yerel ağdaki cihazların kablolu olarak birbirine bağlanmasını sağlar.",
+      "location": "Ethernet kablolarıyla bağlanır.",
+      "importantInfo": "",
+      "summary": "Aynı yerel ağdaki cihazların kablolu olarak birbirine bağlanmasını sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "ethernet_cable",
+      "name": "Ethernet Kablosu",
+      "category": "Ağ",
+      "shortDescription": "Ağ cihazları arasında kablolu veri iletişimi sağlar.",
+      "function": "Ağ cihazları arasında kablolu veri iletişimi sağlar.",
+      "location": "Ethernet portlarına takılır.",
+      "importantInfo": "",
+      "summary": "Ağ cihazları arasında kablolu veri iletişimi sağlar.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    },
+    {
+      "id": "cd_dvd",
+      "name": "CD/DVD",
+      "category": "Depolama",
+      "shortDescription": "Optik disklerde veri saklamak veya okumak için kullanılır.",
+      "function": "Optik disklerde veri saklamak veya okumak için kullanılır.",
+      "location": "Uyumlu optik sürücüye takılır.",
+      "importantInfo": "",
+      "summary": "Optik disklerde veri saklamak veya okumak için kullanılır.",
+      "hotspots": [],
+      "questions": [],
+      "missions": []
+    }
+  ]
+}
