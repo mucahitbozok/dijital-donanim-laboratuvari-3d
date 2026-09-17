@@ -55,8 +55,8 @@ export const Hardware3DViewer: React.FC<Props> = ({
 
     // 1. Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070b16);
-    scene.fog = new THREE.FogExp2(0x070b16, 0.08);
+    scene.background = new THREE.Color(0x07080a);
+    scene.fog = new THREE.FogExp2(0x07080a, 0.07);
     sceneRef.current = scene;
 
     // 2. Camera
@@ -91,25 +91,25 @@ export const Hardware3DViewer: React.FC<Props> = ({
     };
     controlsRef.current = controls;
 
-    // 5. Lighting (Studio Tech Setup)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+    // 5. Lighting (Clean High-Contrast Studio Setup)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
     scene.add(ambientLight);
 
-    // Key Light (Cold bright white)
-    const keyLight = new THREE.DirectionalLight(0xe0f2fe, 1.6);
+    // Key Light (Crisp daylight white)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.8);
     keyLight.position.set(5, 8, 5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
     scene.add(keyLight);
 
-    // Rim/Cyber Light (Cyan / Neon Blue edge highlight)
-    const rimLight = new THREE.DirectionalLight(0x00f0ff, 1.4);
+    // Rim Light (Clean silver/lavender edge highlight)
+    const rimLight = new THREE.DirectionalLight(0xc7d2fe, 0.9);
     rimLight.position.set(-6, 3, -5);
     scene.add(rimLight);
 
-    // Secondary Accent Light (Purple fill)
-    const fillLight = new THREE.PointLight(0xa855f7, 1.0, 15);
+    // Secondary Accent Fill Light (Warm ground bounce)
+    const fillLight = new THREE.PointLight(0xffeedd, 0.6, 20);
     fillLight.position.set(0, -2, -3);
     scene.add(fillLight);
 
@@ -118,23 +118,23 @@ export const Hardware3DViewer: React.FC<Props> = ({
 
     // Shadow catcher floor
     const floorGeo = new THREE.PlaneGeometry(16, 16);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.4 });
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.45 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -1.5;
     floor.receiveShadow = true;
     floorGroup.add(floor);
 
-    // Circular Glowing Tech Rings
+    // Circular Glowing Tech Rings (Subtle graphite and violet)
     const ring1Geo = new THREE.RingGeometry(2.2, 2.24, 64);
-    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
+    const ring1Mat = new THREE.MeshBasicMaterial({ color: 0x6366f1, side: THREE.DoubleSide, transparent: true, opacity: 0.25 });
     const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
     ring1.rotation.x = -Math.PI / 2;
     ring1.position.y = -1.49;
     floorGroup.add(ring1);
 
     const ring2Geo = new THREE.RingGeometry(1.6, 1.62, 48);
-    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.2 });
+    const ring2Mat = new THREE.MeshBasicMaterial({ color: 0xa1a1aa, side: THREE.DoubleSide, transparent: true, opacity: 0.15 });
     const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
     ring2.rotation.x = -Math.PI / 2;
     ring2.position.y = -1.49;
@@ -378,10 +378,10 @@ export const Hardware3DViewer: React.FC<Props> = ({
 
       {/* Loading Overlay */}
       {isLoadingModel && (
-        <div className="absolute inset-0 flex items-center justify-center bg-lab-950/70 backdrop-blur-sm z-20">
+        <div className="absolute inset-0 flex items-center justify-center bg-lab-950/80 backdrop-blur-md z-20">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-12 h-12 border-4 border-sky-500/20 border-t-sky-400 rounded-full animate-spin" />
-            <span className="text-sky-300 font-semibold text-base tracking-wide">
+            <div className="w-12 h-12 border-4 border-zinc-700 border-t-white rounded-full animate-spin" />
+            <span className="text-zinc-200 font-bold text-base tracking-wide">
               Donanım Hazırlanıyor...
             </span>
           </div>
@@ -408,19 +408,19 @@ export const Hardware3DViewer: React.FC<Props> = ({
               onClick={() => handleHotspotClick(hs)}
               className={`group relative flex items-center justify-center w-12 h-12 rounded-full transition-all focus:outline-none ${
                 isSelected
-                  ? 'scale-125 bg-amber-400 text-slate-950 ring-4 ring-amber-300/40 shadow-neon'
-                  : 'bg-lab-900/90 hover:bg-sky-500 text-sky-400 hover:text-white border-2 border-sky-400 shadow-neon hover:scale-110'
+                  ? 'scale-125 bg-amber-400 text-zinc-950 ring-4 ring-amber-400/40 shadow-[0_0_20px_rgba(245,158,11,0.5)] font-black'
+                  : 'bg-zinc-900/90 text-zinc-200 hover:bg-white hover:text-zinc-950 border-2 border-zinc-400/80 shadow-lg hover:scale-110'
               }`}
               title={hs.label}
             >
               {/* Outer pulsing radar ring */}
-              <span className="absolute inset-0 rounded-full border border-sky-400 animate-ping opacity-60 pointer-events-none" />
+              <span className="absolute inset-0 rounded-full border border-zinc-400/50 animate-ping opacity-60 pointer-events-none" />
               <span className="font-bold text-sm tracking-tighter">
                 {index + 1}
               </span>
 
               {/* Hover/Touch Tooltip */}
-              <span className="absolute bottom-full mb-2 px-3 py-1.5 rounded-lg bg-lab-900/95 border border-sky-500/50 text-sky-200 text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none">
+              <span className="absolute bottom-full mb-2 px-3 py-1.5 rounded-lg bg-zinc-900/95 border border-zinc-700 text-zinc-100 text-xs font-semibold whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition pointer-events-none">
                 {hs.label}
               </span>
             </button>
@@ -431,10 +431,10 @@ export const Hardware3DViewer: React.FC<Props> = ({
       {/* Active Hotspot Educational Info Card (Glassmorphism Popup) */}
       {activeHotspot && (
         <div className="absolute top-6 left-6 right-6 md:right-auto md:max-w-md z-30 animate-fade-in">
-          <div className="p-5 rounded-2xl bg-lab-900/90 backdrop-blur-xl border border-sky-500/50 shadow-2xl text-left">
+          <div className="p-5 rounded-2xl bg-zinc-900/95 backdrop-blur-xl border border-zinc-700/80 shadow-2xl text-left">
             <div className="flex items-center justify-between gap-3 mb-2">
               <div className="flex items-center gap-2">
-                <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 font-bold text-xs">
+                <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-amber-400/20 text-amber-300 font-bold text-xs">
                   <Sparkles className="w-4 h-4" />
                 </span>
                 <h4 className="text-lg font-bold text-white tracking-wide">
@@ -443,18 +443,18 @@ export const Hardware3DViewer: React.FC<Props> = ({
               </div>
               <button
                 onClick={() => setActiveHotspot(null)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-slate-200 text-sm leading-relaxed mb-4">
+            <p className="text-zinc-200 text-sm leading-relaxed mb-4">
               {activeHotspot.info}
             </p>
             <div className="flex items-center justify-end">
               <button
                 onClick={() => setActiveHotspot(null)}
-                className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs tracking-wider transition min-h-[44px]"
+                className="px-4 py-2 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 font-black text-xs tracking-wider transition min-h-[44px]"
               >
                 ANLADIM
               </button>
@@ -466,61 +466,60 @@ export const Hardware3DViewer: React.FC<Props> = ({
       {/* Bottom Floating Control Bar (Touch & Smartboard First) */}
       <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 z-20 pointer-events-none">
         {/* Left: Camera Angle Presets */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-lab-900/80 backdrop-blur-md border border-slate-700/60 shadow-xl pointer-events-auto">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-lab-900/90 backdrop-blur-md border border-zinc-800 shadow-xl pointer-events-auto">
           <button
             onClick={() => setCameraView('top')}
-            className="px-3.5 py-2.5 rounded-xl font-medium text-xs text-slate-200 hover:text-white hover:bg-sky-500/20 active:bg-sky-500/30 transition flex items-center gap-1.5 min-h-[48px]"
+            className="px-3.5 py-2.5 rounded-xl font-semibold text-xs text-zinc-300 hover:text-white hover:bg-zinc-800 active:bg-zinc-700 transition flex items-center gap-1.5 min-h-[48px]"
             title="Üst Görünüm"
           >
-            <Compass className="w-4 h-4 text-sky-400" />
+            <Compass className="w-4 h-4 text-zinc-400" />
             <span>Üst</span>
           </button>
           <button
             onClick={() => setCameraView('isometric')}
-            className="px-3.5 py-2.5 rounded-xl font-semibold text-xs text-amber-300 hover:bg-amber-400/20 active:bg-amber-400/30 transition min-h-[48px]"
+            className="px-3.5 py-2.5 rounded-xl font-bold text-xs text-amber-400 hover:bg-amber-400/15 active:bg-amber-400/25 transition min-h-[48px]"
             title="Açıyı Sıfırla"
           >
             Sıfırla
           </button>
         </div>
 
-        {/* Right: Interaction Toggles (Auto-Rotate, Zoom, 2D/3D Mode) */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-lab-900/80 backdrop-blur-md border border-slate-700/60 shadow-xl pointer-events-auto">
+        {/* Right: Interaction Toggles (Auto-Rotate, Zoom) */}
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-lab-900/90 backdrop-blur-md border border-zinc-800 shadow-xl pointer-events-auto">
           {/* Auto rotate toggle */}
           <button
             onClick={() => {
               soundService.playClick();
               setIsAutoRotating(!isAutoRotating);
             }}
-            className={`px-3.5 py-2.5 rounded-xl font-medium text-xs transition flex items-center gap-1.5 min-h-[48px] ${
+            className={`px-3.5 py-2.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 min-h-[48px] ${
               isAutoRotating
-                ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
-                : 'text-slate-300 hover:bg-slate-800'
+                ? 'bg-zinc-800 text-white border border-zinc-600'
+                : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
             }`}
             title="Otomatik Dönüşü Başlat / Durdur"
           >
-            {isAutoRotating ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+            {isAutoRotating ? <Pause className="w-4 h-4 text-emerald-400" /> : <Play className="w-4 h-4 text-zinc-300" />}
             <span>{isAutoRotating ? 'Dönüşü Durdur' : 'Oto Döndür'}</span>
           </button>
 
           {/* Zoom In */}
           <button
             onClick={() => handleZoom(-0.8)}
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-sky-500/20 active:bg-sky-500/30 transition"
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
             title="Yaklaştır"
           >
-            <ZoomIn className="w-5 h-5 text-sky-400" />
+            <ZoomIn className="w-5 h-5" />
           </button>
 
           {/* Zoom Out */}
           <button
             onClick={() => handleZoom(0.8)}
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-sky-500/20 active:bg-sky-500/30 transition"
+            className="w-12 h-12 rounded-xl flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
             title="Uzaklaştır"
           >
-            <ZoomOut className="w-5 h-5 text-sky-400" />
+            <ZoomOut className="w-5 h-5" />
           </button>
-
         </div>
       </div>
     </div>

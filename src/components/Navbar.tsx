@@ -45,21 +45,21 @@ export const Navbar: React.FC<Props> = ({
   };
 
   return (
-    <header className="w-full bg-lab-950/95 border-b border-slate-800/80 px-4 py-2.5 flex items-center justify-between gap-4 backdrop-blur-xl z-30 select-none">
+    <header className="w-full bg-lab-950/95 border-b border-zinc-800/80 px-4 py-2.5 flex items-center justify-between gap-4 backdrop-blur-xl z-30 select-none">
       {/* Brand & App Title */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 to-purple-600 flex items-center justify-center text-slate-950 shadow-neon">
+        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white shadow-[0_0_15px_rgba(99,102,241,0.35)]">
           <Cpu className="w-6 h-6 text-white" />
         </div>
         <div className="flex flex-col text-left">
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-black tracking-widest text-sky-400 uppercase bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-400/20">
+            <span className="text-[10px] font-black tracking-widest text-amber-400 uppercase bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/25">
               ÖĞRETMEN BOZOK
             </span>
           </div>
           <h1 className="text-base lg:text-lg font-black tracking-tight text-white flex items-center gap-2">
             <span>DİJİTAL DONANIM LABORATUVARI</span>
-            <span className="hidden sm:inline-block text-xs font-bold text-slate-400 px-2 py-0.5 rounded-full bg-lab-800 border border-slate-700/60">
+            <span className="hidden sm:inline-block text-xs font-bold text-zinc-400 px-2 py-0.5 rounded-full bg-lab-850 border border-zinc-700/70">
               3D
             </span>
           </h1>
@@ -67,7 +67,7 @@ export const Navbar: React.FC<Props> = ({
       </div>
 
       {/* Center Navigation Modes (Touch-friendly buttons) */}
-      <nav className="flex items-center gap-1.5 p-1 rounded-2xl bg-lab-900/90 border border-slate-800/80">
+      <nav className="flex items-center gap-1.5 p-1 rounded-2xl bg-lab-900/90 border border-zinc-800/80">
         <button
           onClick={() => {
             soundService.playClick();
@@ -75,8 +75,8 @@ export const Navbar: React.FC<Props> = ({
           }}
           className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition min-h-[44px] ${
             activeMode === 'inspect'
-              ? 'bg-sky-500 text-slate-950 shadow-neon'
-              : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+              ? 'bg-white text-zinc-950 font-black shadow-[0_0_15px_rgba(255,255,255,0.25)]'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
           }`}
         >
           <Cpu className="w-4 h-4" />
@@ -90,8 +90,8 @@ export const Navbar: React.FC<Props> = ({
           }}
           className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition min-h-[44px] ${
             activeMode === 'compare'
-              ? 'bg-sky-500 text-slate-950 shadow-neon'
-              : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+              ? 'bg-amber-400 text-zinc-950 font-black shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
           }`}
         >
           <GitCompare className="w-4 h-4" />
@@ -105,8 +105,8 @@ export const Navbar: React.FC<Props> = ({
           }}
           className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition min-h-[44px] ${
             activeMode === 'quiz'
-              ? 'bg-sky-500 text-slate-950 shadow-neon'
-              : 'text-slate-300 hover:text-white hover:bg-slate-800/80'
+              ? 'bg-purple-500 text-white font-black shadow-[0_0_15px_rgba(168,85,247,0.35)]'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
           }`}
         >
           <HelpCircle className="w-4 h-4" />
@@ -125,7 +125,7 @@ export const Navbar: React.FC<Props> = ({
           className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
             isLargeFont
               ? 'bg-purple-500/20 text-purple-300 border border-purple-500/50'
-              : 'text-slate-300 hover:bg-slate-800/80'
+              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/80'
           }`}
           title={isLargeFont ? 'Normal Yazı Boyutuna Dön' : 'Sınıf Ekranı / Büyük Yazı Modu'}
         >
@@ -137,8 +137,8 @@ export const Navbar: React.FC<Props> = ({
           onClick={toggleSound}
           className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
             isSoundOn
-              ? 'text-sky-400 hover:bg-slate-800/80'
-              : 'text-slate-500 hover:bg-slate-800/80'
+              ? 'text-zinc-200 hover:bg-zinc-800/80'
+              : 'text-zinc-600 hover:bg-zinc-800/80'
           }`}
           title={isSoundOn ? 'Ses Efektlerini Kapat' : 'Ses Efektlerini Aç'}
         >
@@ -148,7 +148,7 @@ export const Navbar: React.FC<Props> = ({
         {/* Fullscreen Toggle */}
         <button
           onClick={toggleFullscreen}
-          className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-800/80 transition"
+          className="w-11 h-11 rounded-xl flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition"
           title={isFullscreen ? 'Tam Ekrandan Çık' : 'Tam Ekran Modu (Akıllı Tahta)'}
         >
           {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
@@ -162,8 +162,8 @@ export const Navbar: React.FC<Props> = ({
           }}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition min-h-[44px] ${
             activeMode === 'admin'
-              ? 'bg-purple-600 text-white shadow-neon-purple'
-              : 'bg-lab-800 text-slate-300 hover:text-white hover:bg-slate-700 border border-slate-700/50'
+              ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.35)]'
+              : 'bg-lab-850 text-zinc-300 hover:text-white hover:bg-zinc-800 border border-zinc-700/60'
           }`}
           title="Öğretmen Yönetim Paneli"
         >

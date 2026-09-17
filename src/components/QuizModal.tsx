@@ -73,19 +73,19 @@ export const QuizModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in select-none">
-      <div className="w-full max-w-2xl flex flex-col rounded-3xl bg-lab-900 border border-sky-500/40 shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-in select-none">
+      <div className="w-full max-w-2xl flex flex-col rounded-3xl bg-lab-900 border border-zinc-700/80 shadow-2xl overflow-hidden">
         {/* Modal Header */}
-        <div className="p-6 border-b border-slate-800 flex items-center justify-between bg-lab-950/70">
+        <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-lab-950/80">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center">
               <HelpCircle className="w-6 h-6" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-white tracking-wide">
                 Hazır Mısın? — {hardware.name}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-zinc-400">
                 Öğrendiklerini pekiştirmek için 3 soruluk mini test (Not verilmez).
               </p>
             </div>
@@ -96,7 +96,7 @@ export const QuizModal: React.FC<Props> = ({
               soundService.playClick();
               onClose();
             }}
-            className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition min-h-[44px]"
+            className="w-11 h-11 rounded-xl flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 transition min-h-[44px]"
           >
             <X className="w-6 h-6" />
           </button>
@@ -105,17 +105,17 @@ export const QuizModal: React.FC<Props> = ({
         {/* Modal Body */}
         <div className="p-6 space-y-6 text-left">
           {questions.length === 0 ? (
-            <div className="py-12 text-center text-slate-400">
+            <div className="py-12 text-center text-zinc-400">
               <p className="text-base font-semibold">Bu parça için henüz test sorusu eklenmemiş.</p>
-              <p className="text-xs text-slate-500 mt-1">Öğretmen panelinden yeni soru ekleyebilirsiniz.</p>
+              <p className="text-xs text-zinc-500 mt-1">Öğretmen panelinden yeni soru ekleyebilirsiniz.</p>
             </div>
           ) : !isFinished ? (
             <>
               {/* Question Progress & Text */}
               <div>
-                <div className="flex items-center justify-between text-xs font-bold text-sky-400 uppercase tracking-wider mb-2">
+                <div className="flex items-center justify-between text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">
                   <span>Soru {currentQuestionIndex + 1} / {questions.length}</span>
-                  <span className="text-slate-400">Pekiştirme Sorusu</span>
+                  <span className="text-zinc-400">Pekiştirme Sorusu</span>
                 </div>
                 <h3 className="text-xl font-extrabold text-white leading-snug">
                   {currentQ.question}
@@ -129,7 +129,7 @@ export const QuizModal: React.FC<Props> = ({
                   const isSelected = selectedOption === idx;
                   const isCorrectAnswer = idx === currentQ.answer;
 
-                  let buttonStyle = 'bg-lab-800/80 hover:bg-lab-700/80 border-slate-700 text-slate-200';
+                  let buttonStyle = 'bg-lab-850 hover:bg-lab-800 border-zinc-800 text-zinc-200';
 
                   if (isAnswered) {
                     if (isCorrectAnswer) {
@@ -137,7 +137,7 @@ export const QuizModal: React.FC<Props> = ({
                     } else if (isSelected) {
                       buttonStyle = 'bg-rose-500/20 border-rose-500 text-rose-300 ring-2 ring-rose-500/40';
                     } else {
-                      buttonStyle = 'opacity-40 border-slate-800 text-slate-500';
+                      buttonStyle = 'opacity-40 border-zinc-800 text-zinc-500';
                     }
                   }
 
@@ -148,7 +148,7 @@ export const QuizModal: React.FC<Props> = ({
                       onClick={() => handleSelectOption(idx)}
                       className={`w-full p-4 rounded-2xl border transition-all flex items-center gap-4 text-left font-semibold text-base min-h-[56px] active:scale-[0.99] ${buttonStyle}`}
                     >
-                      <span className="w-9 h-9 rounded-xl flex items-center justify-center font-bold bg-slate-900/60 border border-slate-700/60 text-sky-400 flex-shrink-0">
+                      <span className="w-9 h-9 rounded-xl flex items-center justify-center font-bold bg-lab-900 border border-zinc-700 text-zinc-300 flex-shrink-0">
                         {letter}
                       </span>
                       <span className="flex-1">{option}</span>
@@ -194,13 +194,13 @@ export const QuizModal: React.FC<Props> = ({
           ) : (
             /* Finished Card */
             <div className="py-8 flex flex-col items-center text-center space-y-4">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-sky-400 to-purple-500 flex items-center justify-center text-slate-950 shadow-neon">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-[0_0_25px_rgba(168,85,247,0.4)]">
                 <Sparkles className="w-10 h-10 text-white animate-bounce" />
               </div>
               <h3 className="text-2xl font-black text-white">
                 Tebrikler, Mini Testi Tamamladın!
               </h3>
-              <p className="text-slate-300 text-sm max-w-md leading-relaxed">
+              <p className="text-zinc-300 text-sm max-w-md leading-relaxed">
                 {hardware.name} donanımı hakkındaki soruları başarıyla inceledin.
                 İstersen diğer parçaların sorularını da keşfedebilirsin.
               </p>
@@ -209,17 +209,17 @@ export const QuizModal: React.FC<Props> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-slate-800 bg-lab-950/80 flex items-center justify-between">
+        <div className="p-4 border-t border-zinc-800 bg-lab-950/80 flex items-center justify-between">
           {isFinished ? (
             <button
               onClick={handleRestart}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-lab-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition min-h-[48px]"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-lab-800 hover:bg-zinc-700 text-zinc-200 font-bold text-sm transition min-h-[48px]"
             >
               <RotateCcw className="w-4 h-4" />
               <span>Tekrar Çöz</span>
             </button>
           ) : (
-            <div className="text-xs text-slate-400 font-medium">
+            <div className="text-xs text-zinc-400 font-medium">
               Not yok, sadece keşfet ve öğren! 🎯
             </div>
           )}
@@ -227,7 +227,7 @@ export const QuizModal: React.FC<Props> = ({
           {isAnswered && !isFinished ? (
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm transition shadow-neon min-h-[48px]"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-sm transition shadow-[0_0_15px_rgba(168,85,247,0.35)] min-h-[48px]"
             >
               <span>{currentQuestionIndex + 1 === questions.length ? 'Testi Bitir' : 'Sonraki Soru'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -238,7 +238,7 @@ export const QuizModal: React.FC<Props> = ({
                 soundService.playClick();
                 onClose();
               }}
-              className="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition min-h-[48px]"
+              className="px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-sm transition min-h-[48px]"
             >
               Kapat
             </button>

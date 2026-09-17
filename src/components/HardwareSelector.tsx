@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { HardwareItem } from '../types/hardware';
 import { soundService } from '../services/sound';
+import { getCategoryTheme } from '../utils/theme';
 import {
   Cpu,
   Layers,
@@ -104,15 +105,16 @@ export const HardwareSelector: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full bg-lab-950/95 border-t border-slate-800/80 p-3 flex flex-col gap-2.5 backdrop-blur-xl z-20 select-none">
+    <div className="w-full bg-lab-950/95 border-t border-zinc-800/80 p-3 flex flex-col gap-2.5 backdrop-blur-xl z-20 select-none">
       {/* Category Pills (Horizontal Scrollable) */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-        <div className="flex items-center gap-1.5 px-2.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
-          <SlidersHorizontal className="w-3.5 h-3.5 text-sky-400" />
+        <div className="flex items-center gap-1.5 px-2.5 text-xs font-bold text-zinc-400 uppercase tracking-wider">
+          <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-400" />
           <span>Kategoriler:</span>
         </div>
         {categoryOptions.map((cat) => {
           const isCatSelected = selectedCategory === cat;
+          const catTheme = getCategoryTheme(cat);
           return (
             <button
               key={cat}
@@ -120,13 +122,17 @@ export const HardwareSelector: React.FC<Props> = ({
                 soundService.playClick();
                 setSelectedCategory(cat);
               }}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition min-h-[38px] ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all min-h-[38px] ${
                 isCatSelected
-                  ? 'bg-sky-500 text-slate-950 shadow-neon scale-105'
-                  : 'bg-lab-800/70 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-700/50'
+                  ? (cat === 'Tümü' ? 'bg-white text-zinc-950 shadow-[0_0_15px_rgba(255,255,255,0.3)] font-black scale-105' : `${catTheme.pillActive} scale-105`)
+                  : 'bg-lab-900/80 text-zinc-300 hover:bg-lab-800 hover:text-white border border-zinc-800'
               }`}
             >
-              {cat !== 'Tümü' && getCategoryIcon(cat)}
+              {cat !== 'Tümü' && (
+                <span className={isCatSelected ? '' : catTheme.textColor}>
+                  {getCategoryIcon(cat)}
+                </span>
+              )}
               <span>{cat}</span>
             </button>
           );
@@ -137,23 +143,29 @@ export const HardwareSelector: React.FC<Props> = ({
       <div className="flex items-center gap-3 overflow-x-auto custom-scrollbar py-1">
         {filteredList.map((item) => {
           const isSelected = item.id === selectedId;
+          const itemTheme = getCategoryTheme(item.category);
 
           return (
             <button
               key={item.id}
               onClick={() => handleCardClick(item)}
+              style={
+                isSelected
+                  ? { boxShadow: `0 0 20px ${itemTheme.activeCardGlow}` }
+                  : undefined
+              }
               className={`flex-shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl border transition-all text-left group min-h-[56px] ${
                 isSelected
-                  ? 'bg-gradient-to-r from-sky-500/25 to-purple-500/25 border-sky-400 text-white shadow-neon ring-2 ring-sky-400/40 scale-105'
-                  : 'bg-lab-900/80 hover:bg-lab-800/90 border-slate-800 text-slate-300 hover:border-slate-700'
+                  ? `bg-gradient-to-r ${itemTheme.activeCardBg} ${itemTheme.activeCardBorder} text-white scale-105`
+                  : 'bg-lab-900/90 hover:bg-lab-850 border-zinc-800/80 text-zinc-300 hover:border-zinc-700'
               }`}
             >
               {/* Icon Container */}
               <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center transition ${
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                   isSelected
-                    ? 'bg-sky-500 text-slate-950'
-                    : 'bg-slate-800/80 text-sky-400 group-hover:bg-slate-800'
+                    ? 'bg-white text-zinc-950 shadow-md font-bold'
+                    : `bg-lab-800 ${itemTheme.textColor} group-hover:bg-lab-750`
                 }`}
               >
                 {getCategoryIcon(item.category)}
@@ -161,10 +173,10 @@ export const HardwareSelector: React.FC<Props> = ({
 
               {/* Title and Category label */}
               <div className="flex flex-col">
-                <span className="text-sm font-bold text-white whitespace-nowrap group-hover:text-sky-300 transition">
+                <span className="text-sm font-bold text-white whitespace-nowrap group-hover:text-white transition">
                   {item.name}
                 </span>
-                <span className="text-[11px] font-semibold text-slate-400">
+                <span className={`text-[11px] font-semibold transition ${isSelected ? 'text-zinc-200' : itemTheme.textColor}`}>
                   {item.category}
                 </span>
               </div>
