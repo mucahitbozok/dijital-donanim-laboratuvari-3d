@@ -30,6 +30,11 @@ export default {
         'glow-accent': '0 0 25px -4px rgba(99, 102, 241, 0.25)',
         'card-glow': '0 8px 30px -4px rgba(0, 0, 0, 0.7)',
         'neon': '0 0 20px -3px rgba(255, 255, 255, 0.25)',
+      },
+      screens: {
+        '3xl': '1920px',
+        '4k': '2560px',
+        'uhd': '3840px',
       }
     },
   },

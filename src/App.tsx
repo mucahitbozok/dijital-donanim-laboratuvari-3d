@@ -47,7 +47,7 @@ export const App: React.FC = () => {
         </div>
 
         {/* Right Area: Dynamic Info Panel */}
-        <div className="w-full lg:w-[420px] xl:w-[460px] h-2/5 lg:h-full flex-shrink-0 z-10">
+        <div className="w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-2/5 lg:h-full flex-shrink-0 z-10">
           <HardwareInfoPanel
             hardware={activeHardware}
             onOpenQuiz={() => setActiveMode('quiz')}

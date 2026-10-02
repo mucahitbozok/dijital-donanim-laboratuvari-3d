@@ -122,12 +122,14 @@ export const HardwareSelector: React.FC<Props> = ({
     }
   }, [selectedId, selectedCategory]);
 
-  // Smooth arrow button navigation
+  // Smooth arrow button navigation (Auto-scales step on 4K)
   const scrollByAmount = (offset: number) => {
     const el = scrollContainerRef.current;
     if (!el) return;
     if (momentumAnimId.current) cancelAnimationFrame(momentumAnimId.current);
-    el.scrollBy({ left: offset, behavior: 'smooth' });
+    const isLargeScreen = typeof window !== 'undefined' && window.innerWidth >= 2400;
+    const scrollDelta = isLargeScreen ? Math.sign(offset) * Math.max(640, Math.floor(window.innerWidth * 0.28)) : offset;
+    el.scrollBy({ left: scrollDelta, behavior: 'smooth' });
     soundService.playClick();
   };
 
@@ -290,7 +292,7 @@ export const HardwareSelector: React.FC<Props> = ({
                 soundService.playClick();
                 setSelectedCategory(cat);
               }}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all min-h-[38px] ${
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 3xl:px-4 3xl:py-2.5 4k:px-5 4k:py-3 rounded-xl 3xl:rounded-2xl text-xs 3xl:text-sm 4k:text-base font-bold whitespace-nowrap transition-all min-h-[38px] 3xl:min-h-[46px] 4k:min-h-[54px] ${
                 isCatSelected
                   ? (cat === 'Tümü' ? 'bg-white text-zinc-950 shadow-[0_0_15px_rgba(255,255,255,0.3)] font-black scale-105' : `${catTheme.pillActive} scale-105`)
                   : 'bg-lab-900/80 text-zinc-300 hover:bg-lab-800 hover:text-white border border-zinc-800'
@@ -309,7 +311,7 @@ export const HardwareSelector: React.FC<Props> = ({
 
       {/* Category Educational Description Banner (Visible when a specific category is selected) */}
       {selectedCategory !== 'Tümü' && defaultCategoryDescriptions[selectedCategory] && (
-        <div className="px-3 py-1.5 rounded-xl bg-lab-900/90 border border-zinc-800/90 text-xs flex items-center gap-2 text-zinc-300 animate-fade-in">
+        <div className="px-3 py-1.5 3xl:px-4 3xl:py-2 rounded-xl bg-lab-900/90 border border-zinc-800/90 text-xs 3xl:text-sm 4k:text-base flex items-center gap-2 text-zinc-300 animate-fade-in">
           <span className="font-bold text-amber-400 flex-shrink-0">💡 {selectedCategory}:</span>
           <span className="truncate md:whitespace-normal font-medium">{defaultCategoryDescriptions[selectedCategory]}</span>
         </div>
@@ -321,34 +323,34 @@ export const HardwareSelector: React.FC<Props> = ({
         <button
           onClick={() => scrollByAmount(-320)}
           aria-label="Sola kaydır"
-          className={`absolute left-1 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-lab-900/95 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-white shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 ${
+          className={`absolute left-1 top-1/2 -translate-y-1/2 z-30 w-9 h-9 3xl:w-12 3xl:h-12 4k:w-14 4k:h-14 rounded-full bg-lab-900/95 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-white shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 ${
             canScrollLeft ? 'opacity-90 hover:opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5 3xl:w-7 3xl:h-7 4k:w-8 4k:h-8" />
         </button>
 
         {/* Right Smooth Arrow Button */}
         <button
           onClick={() => scrollByAmount(320)}
           aria-label="Sağa kaydır"
-          className={`absolute right-1 top-1/2 -translate-y-1/2 z-30 w-9 h-9 rounded-full bg-lab-900/95 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-white shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 ${
+          className={`absolute right-1 top-1/2 -translate-y-1/2 z-30 w-9 h-9 3xl:w-12 3xl:h-12 4k:w-14 4k:h-14 rounded-full bg-lab-900/95 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 hover:text-white shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 ${
             canScrollRight ? 'opacity-90 hover:opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5 3xl:w-7 3xl:h-7 4k:w-8 4k:h-8" />
         </button>
 
         {/* Left Edge Subtle Fade Gradient */}
         <div
-          className={`absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-lab-950 via-lab-950/80 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${
+          className={`absolute left-0 top-0 bottom-0 w-12 3xl:w-16 4k:w-20 bg-gradient-to-r from-lab-950 via-lab-950/80 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${
             canScrollLeft ? 'opacity-100' : 'opacity-0'
           }`}
         />
 
         {/* Right Edge Subtle Fade Gradient */}
         <div
-          className={`absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-lab-950 via-lab-950/80 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${
+          className={`absolute right-0 top-0 bottom-0 w-12 3xl:w-16 4k:w-20 bg-gradient-to-l from-lab-950 via-lab-950/80 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${
             canScrollRight ? 'opacity-100' : 'opacity-0'
           }`}
         />
@@ -358,7 +360,7 @@ export const HardwareSelector: React.FC<Props> = ({
           ref={scrollContainerRef}
           onPointerDown={handlePointerDown}
           onWheel={handleWheel}
-          className={`flex items-center gap-3 overflow-x-auto custom-scrollbar py-2 px-1 touch-pan-y transition-colors ${
+          className={`flex items-center gap-3 3xl:gap-4 4k:gap-5 overflow-x-auto custom-scrollbar py-2 px-1 touch-pan-y transition-colors ${
             isGrabbing ? 'cursor-grabbing select-none' : 'cursor-grab'
           }`}
           style={{ scrollBehavior: isGrabbing ? 'auto' : 'smooth' }}
@@ -379,7 +381,7 @@ export const HardwareSelector: React.FC<Props> = ({
                     ? { boxShadow: `0 0 22px ${itemTheme.activeCardGlow}` }
                     : undefined
                 }
-                className={`flex-shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl border transition-all duration-200 text-left group select-none min-h-[58px] ${
+                className={`flex-shrink-0 flex items-center gap-3 3xl:gap-4 px-4 py-2.5 3xl:px-5 3xl:py-3.5 4k:px-6 4k:py-4 rounded-2xl border transition-all duration-200 text-left group select-none min-h-[58px] 3xl:min-h-[70px] 4k:min-h-[82px] ${
                   isSelected
                     ? `bg-gradient-to-r ${itemTheme.activeCardBg} ${itemTheme.activeCardBorder} text-white scale-105 shadow-lg`
                     : 'bg-lab-900/85 hover:bg-lab-850/95 border-zinc-800/80 text-zinc-300 hover:border-zinc-700 hover:-translate-y-0.5'
@@ -387,7 +389,7 @@ export const HardwareSelector: React.FC<Props> = ({
               >
                 {/* Icon Container */}
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all pointer-events-none ${
+                  className={`w-10 h-10 3xl:w-13 3xl:h-13 4k:w-15 4k:h-15 rounded-xl 3xl:rounded-2xl flex items-center justify-center transition-all pointer-events-none ${
                     isSelected
                       ? 'bg-white text-zinc-950 shadow-md font-bold'
                       : `bg-lab-800 ${itemTheme.textColor} group-hover:bg-lab-750`
@@ -398,10 +400,10 @@ export const HardwareSelector: React.FC<Props> = ({
 
                 {/* Title and Category label */}
                 <div className="flex flex-col pointer-events-none">
-                  <span className="text-sm font-bold text-white whitespace-nowrap group-hover:text-white transition">
+                  <span className="text-sm 3xl:text-base 4k:text-lg font-bold text-white whitespace-nowrap group-hover:text-white transition">
                     {item.name}
                   </span>
-                  <span className={`text-[11px] font-semibold transition ${isSelected ? 'text-zinc-200' : itemTheme.textColor}`}>
+                  <span className={`text-[11px] 3xl:text-xs 4k:text-sm font-semibold transition ${isSelected ? 'text-zinc-200' : itemTheme.textColor}`}>
                     {item.category}
                   </span>
                 </div>

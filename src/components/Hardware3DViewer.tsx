@@ -46,6 +46,16 @@ export const Hardware3DViewer: React.FC<Props> = ({
   const [projectedHotspots, setProjectedHotspots] = useState<ProjectedHotspot[]>([]);
   const [isLoadingModel, setIsLoadingModel] = useState(false);
 
+  // Smartboard 4K & High-DPI Optimal Pixel Ratio (Protects OPS GPU while keeping 4K ultra-sharp)
+  const getOptimalPixelRatio = () => {
+    const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+    const is4K = typeof window !== 'undefined' && (window.innerWidth >= 2400 || window.innerHeight >= 1400);
+    if (is4K) {
+      return Math.min(dpr, 1.25);
+    }
+    return Math.min(dpr, 2);
+  };
+
   // Initialize Three.js Scene
   useEffect(() => {
     if (!containerRef.current || !canvasRef.current) return;
@@ -71,7 +81,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
       powerPreference: 'high-performance'
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(getOptimalPixelRatio());
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     rendererRef.current = renderer;
@@ -150,6 +160,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
       cameraRef.current.aspect = w / h;
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
+      rendererRef.current.setPixelRatio(getOptimalPixelRatio());
     };
     window.addEventListener('resize', handleResize);
 

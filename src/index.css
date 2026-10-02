@@ -10,6 +10,28 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Smartboard and 4K Ultra HD Display Progressive Scaling */
+@media (min-width: 1920px) {
+  :root {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 3400px) {
+  :root {
+    font-size: 23px;
   }
 }
 
