@@ -622,7 +622,41 @@
       "importantInfo": "",
       "summary": "İşlemciden gelen ısının uzaklaştırılmasına yardımcı olur.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "İşlemci soğutucusunun bilgisayardaki temel görevi nedir?",
+          "options": [
+            "İşlemcinin aşırı ısınmasını önleyip soğutmak",
+            "Bilgisayara ses vermek",
+            "Ekrana görüntü aktarmak",
+            "İnternete bağlanmak"
+          ],
+          "answer": 0,
+          "explanation": "Soğutucu, yoğun çalışan işlemcinin ürettiği ısıyı dağıtarak güvenli sıcaklıkta kalmasını sağlar."
+        },
+        {
+          "question": "İşlemci soğutucusu yeterli çalışmazsa veya takılmazsa ne olur?",
+          "options": [
+            "Bilgisayar daha hızlı çalışır",
+            "İşlemci aşırı ısınıp bilgisayar kendini korumak için kapatır",
+            "İnternet hızı artar",
+            "Hoparlörden ses kesilir"
+          ],
+          "answer": 1,
+          "explanation": "İşlemci aşırı ısındığında zarar görmemek için kendini korumaya alıp sistemi kapatır."
+        },
+        {
+          "question": "İşlemci ile soğutucu metal bloğu arasına ısı iletimini artırmak için ne sürülür?",
+          "options": [
+            "Yapıştırıcı",
+            "Termal macun",
+            "Sıvı sabun",
+            "Diş macunu"
+          ],
+          "answer": 1,
+          "explanation": "Termal macun, mikroskobik hava boşluklarını doldurarak ısının soğutucuya hızlıca iletilmesini sağlar."
+        }
+      ],
       "missions": []
     },
     {
@@ -635,7 +669,41 @@
       "importantInfo": "",
       "summary": "Bilgisayarın iç bileşenlerini korur ve bir arada tutar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Bilgisayar kasasının temel görevi nedir?",
+          "options": [
+            "İç donanım parçalarını bir arada tutmak ve korumak",
+            "Belge yazdırmak",
+            "Müzik çalmak",
+            "İnternet yayını yapmak"
+          ],
+          "answer": 0,
+          "explanation": "Kasa, anakart, işlemci, güç kaynağı gibi tüm dahili parçaları dış darbelerden ve tozdan korur."
+        },
+        {
+          "question": "Aşağıdakilerden hangisi genellikle bilgisayar kasasının içinde yer alır?",
+          "options": [
+            "Yazıcı",
+            "Anakart",
+            "Tarayıcı",
+            "Projeksiyon"
+          ],
+          "answer": 1,
+          "explanation": "Anakart kasanın içine vidalanan en temel iç donanımdır."
+        },
+        {
+          "question": "Kasanın ön veya üst panelinde kullanıcıların sıkça kullandığı hangi bağlantı noktaları bulunur?",
+          "options": [
+            "USB ve kulaklık girişleri",
+            "Kağıt besleme tepsisi",
+            "Optik tarama camı",
+            "Kamera lensi"
+          ],
+          "answer": 0,
+          "explanation": "Kolay erişim için kasaların önünde USB girişleri, açma/kapatma düğmesi ve ses jakları bulunur."
+        }
+      ],
       "missions": [],
       "model3d": "/models/computer_case.glb"
     },
@@ -649,7 +717,41 @@
       "importantInfo": "",
       "summary": "Harf, rakam ve komut tuşlarıyla bilgisayara veri girişi sağlayan temel giriş birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Klavye hangi donanım birimi grubuna girer?",
+          "options": [
+            "Çıkış Birimi",
+            "Giriş Birimi",
+            "Sadece Depolama Birimi",
+            "Ağ Birimi"
+          ],
+          "answer": 1,
+          "explanation": "Klavye, dışarıdan bilgisayara yazı ve komut girişi sağladığı için Giriş Birimidir."
+        },
+        {
+          "question": "Türkiye'de en yaygın olarak kullanılan standart Türkçe klavye dizilimi hangisidir?",
+          "options": [
+            "Q Klavye",
+            "Z Klavye",
+            "A Klavye",
+            "Numeric Klavye"
+          ],
+          "answer": 0,
+          "explanation": "Türkiye'de yaygın olarak sol üstte Q harfiyle başlayan Q Klavye, kamu ve daktilo kökenli olarak da F Klavye kullanılır."
+        },
+        {
+          "question": "Klavyede kelimeler arasında boşluk bırakmak için kullanılan en uzun tuş hangisidir?",
+          "options": [
+            "Enter",
+            "Shift",
+            "Ara Çubuğu (Space)",
+            "Backspace"
+          ],
+          "answer": 2,
+          "explanation": "Klavyenin en altında yer alan uzun tuş Space (Ara Çubuğu) tuşudur."
+        }
+      ],
       "missions": [],
       "model3d": "/models/keyboard.glb"
     },
@@ -663,7 +765,41 @@
       "importantInfo": "",
       "summary": "Bilgisayara imleç hareketleri ve tıklama komutları gönderen temel giriş birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Fare (Mouse) hangi donanım birimi türüdür?",
+          "options": [
+            "Giriş Birimi",
+            "Çıkış Birimi",
+            "Depolama Birimi",
+            "Soğutma Birimi"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayara tıklama ve imleç yön komutları gönderdiği için bir Giriş Birimidir."
+        },
+        {
+          "question": "Ekranda farenin hareketlerini takip eden ok şeklindeki simgeye ne ad verilir?",
+          "options": [
+            "İmleç (Cursor)",
+            "Piksel",
+            "Dosya",
+            "Pencere"
+          ],
+          "answer": 0,
+          "explanation": "Fareyi hareket ettirdiğimizde ekranda gezinen ok işaretçisine imleç denir."
+        },
+        {
+          "question": "Bir dosya veya klasörü açmak için fare ile hangi işlem yapılır?",
+          "options": [
+            "Sağ tek tıklama",
+            "Sol çift tıklama",
+            "Fareyi havaya kaldırma",
+            "Sadece fareyi kaydırma"
+          ],
+          "answer": 1,
+          "explanation": "Sol tuşla çift tıklamak bir programı veya dosyayı başlatıp açar."
+        }
+      ],
       "missions": [],
       "model3d": "/models/mouse.glb"
     },
@@ -677,7 +813,41 @@
       "importantInfo": "",
       "summary": "Ses dalgalarını elektrik sinyaline dönüştürerek bilgisayara ses girişi sağlayan birimdir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Mikrofon bilgisayarda ne tür bir görev yapar?",
+          "options": [
+            "Ses dalgalarını elektrik sinyaline çevirip bilgisayara aktarır",
+            "Ekrana görüntü verir",
+            "Kağıda baskı yapar",
+            "Bilgisayarı soğutur"
+          ],
+          "answer": 0,
+          "explanation": "Mikrofon, ortamdaki sesleri bilgisayarın işleyebileceği dijital verilere çeviren bir giriş birimidir."
+        },
+        {
+          "question": "Mikrofon hangi donanım kategorisinde yer alır?",
+          "options": [
+            "Giriş Birimi",
+            "Çıkış Birimi",
+            "Güç Birimi",
+            "Bellek"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayara dışarıdan ses bilgisi gönderdiği için bir Giriş Birimidir."
+        },
+        {
+          "question": "Canlı derste konuşabilmek veya sesli komut verebilmek için bilgisayara hangi donanım gereklidir?",
+          "options": [
+            "Yazıcı",
+            "Mikrofon",
+            "Tarayıcı",
+            "Sabit Disk"
+          ],
+          "answer": 1,
+          "explanation": "Sesimizi bilgisayara ve internete aktarmak için mikrofon kullanırız."
+        }
+      ],
       "missions": [],
       "model3d": "/models/mic.glb"
     },
@@ -691,7 +861,41 @@
       "importantInfo": "",
       "summary": "Gerçek hayattaki canlı görüntü ve videoları bilgisayara aktaran giriş birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Web kamerasının (Webcam) temel görevi nedir?",
+          "options": [
+            "Gerçek hayattaki canlı görüntüleri bilgisayara aktarmak",
+            "Sesleri hoparlörden dinletmek",
+            "Bilgisayarın elektriğini kesmek",
+            "Fotoğraf çıktısı almak"
+          ],
+          "answer": 0,
+          "explanation": "Web kamerası ortamın hareketli video görüntüsünü bilgisayara aktaran bir giriş birimidir."
+        },
+        {
+          "question": "Web kamerası hangi birim kategorisine aittir?",
+          "options": [
+            "Giriş Birimi",
+            "Çıkış Birimi",
+            "Kalıcı Depolama",
+            "Ağ Anahtarı"
+          ],
+          "answer": 0,
+          "explanation": "Dışarıdan bilgisayara görüntü girişi sağladığı için Giriş Birimidir."
+        },
+        {
+          "question": "Web kamerası çoğunlukla hangi amaçla kullanılır?",
+          "options": [
+            "Görüntülü görüşmeler ve canlı dersler",
+            "Yazı yazmak",
+            "Müzik çalmak",
+            "Bilgisayarı başlatmak"
+          ],
+          "answer": 0,
+          "explanation": "Web kameraları video konferans, uzaktan eğitim ve yayıncılıkta görüntü aktarımı için kullanılır."
+        }
+      ],
       "missions": [],
       "model3d": "/models/web-camera.glb"
     },
@@ -705,7 +909,41 @@
       "importantInfo": "",
       "summary": "Basılı belge ve fotoğrafları optik olarak tarayıp bilgisayara dijital resim olarak aktaran giriş birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Tarayıcının (Scanner) görevi nedir?",
+          "options": [
+            "Basılı kağıt ve fotoğrafları dijital resim olarak bilgisayara aktarmak",
+            "Kağıda renkli çıktı basmak",
+            "Ses kaydı yapmak",
+            "İnternete bağlanmak"
+          ],
+          "answer": 0,
+          "explanation": "Tarayıcı kağıttaki görüntüyü optik sensörlerle tarayarak bilgisayara resim dosyası olarak gönderir."
+        },
+        {
+          "question": "Tarayıcı neden bir Giriş Birimidir?",
+          "options": [
+            "Çünkü dışarıdaki fiziksel belgeyi bilgisayara veri olarak aktarır",
+            "Çünkü kağıt üretir",
+            "Çünkü ses çıkarır",
+            "Çünkü elektrik üretir"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayara dış ortamdan veri (görüntü) gönderdiği için giriş birimidir."
+        },
+        {
+          "question": "Bir öğrenci resim dersinde çizdiği resmi bilgisayara aktarmak isterse hangi donanımı kullanmalıdır?",
+          "options": [
+            "Tarayıcı",
+            "Yazıcı",
+            "Hoparlör",
+            "Kulaklık"
+          ],
+          "answer": 0,
+          "explanation": "Fiziksel bir çizim veya fotoğraf tarayıcı camına konularak taranır ve bilgisayara aktarılır."
+        }
+      ],
       "missions": [],
       "model3d": "/models/scanner.glb"
     },
@@ -719,7 +957,41 @@
       "importantInfo": "",
       "summary": "Oyunlarda kontrol komutları vermek için kullanılır.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Oyun kumandası (Gamepad) hangi kategoriye aittir?",
+          "options": [
+            "Giriş Birimi",
+            "Çıkış Birimi",
+            "Bellek",
+            "Soğutma"
+          ],
+          "answer": 0,
+          "explanation": "Oyun kumandası düğmelerine basıldığında bilgisayara oyun komutları gönderdiği için Giriş Birimidir."
+        },
+        {
+          "question": "Oyun kumandası üzerindeki tuşlar ve yön kolları ne işe yarar?",
+          "options": [
+            "Oyundaki karakteri ve eylemleri yönetmek",
+            "Kağıt basmak",
+            "İnternet sinyalini artırmak",
+            "Ses kaydetmek"
+          ],
+          "answer": 0,
+          "explanation": "Düğmeler ve yön çubukları oyuna yön ve eylem komutları iletir."
+        },
+        {
+          "question": "Bir bilgisayara fare ve klavye yerine spor veya yarış oyunlarında ne bağlanabilir?",
+          "options": [
+            "Oyun kumandası (Gamepad)",
+            "Yazıcı",
+            "Monitör",
+            "Soğutucu"
+          ],
+          "answer": 0,
+          "explanation": "Oyun kumandaları daha rahat ve ergonomik oyun kontrolü sağlar."
+        }
+      ],
       "missions": []
     },
     {
@@ -732,7 +1004,41 @@
       "importantInfo": "",
       "summary": "Dokunma yoluyla etkileşim sağlar ve görüntü gösterir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Dokunmatik ekran neden 'Hem Giriş Hem Çıkış Birimi' olarak kabul edilir?",
+          "options": [
+            "Görüntü verdiği için çıkış, dokunmayla komut aldığı için giriş birimidir",
+            "Sadece yazı yazdığı için",
+            "Elektrik ürettiği için",
+            "İnterneti hızlandırdığı için"
+          ],
+          "answer": 0,
+          "explanation": "Dokunmatik ekran bize görüntüyü gösterirken (çıkış), parmağımızla dokunduğumuzda bilgisayara komut iletir (giriş)."
+        },
+        {
+          "question": "Aşağıdaki cihazlardan hangisinde dokunmatik ekran teknolojisi yaygın olarak kullanılır?",
+          "options": [
+            "Akıllı telefonlar, tabletler ve akıllı tahtalar",
+            "Sadece sabit diskler",
+            "Sadece güç kaynakları",
+            "Sadece masaüstü kasalar"
+          ],
+          "answer": 0,
+          "explanation": "Akıllı tahtalar ve tabletler dokunmatik ekranla hem görüntüler hem etkileşim alır."
+        },
+        {
+          "question": "Akıllı tahtada parmağımızla çizim yaparken ekran hangi görevini yerine getirir?",
+          "options": [
+            "Giriş birimi görevi (komut/çizim girişi)",
+            "Sadece soğutma görevi",
+            "Güç sağlama görevi",
+            "Kağıt besleme görevi"
+          ],
+          "answer": 0,
+          "explanation": "Ekrana dokunarak çizim yaptığımızda bilgisayara koordinat ve çizim verisi göndeririz."
+        }
+      ],
       "missions": []
     },
     {
@@ -745,7 +1051,41 @@
       "importantInfo": "",
       "summary": "Bilgisayarda işlenen bilgileri, görüntü ve yazıları görmemizi sağlayan temel çıkış birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Monitör (Ekran) hangi donanım birimi grubundadır?",
+          "options": [
+            "Çıkış Birimi",
+            "Giriş Birimi",
+            "Sadece Bellek",
+            "Ağ Donanımı"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayardaki verileri ve görüntüleri bize gösterdiği için Çıkış Birimidir."
+        },
+        {
+          "question": "Bilgisayarın kasasından gelen görüntü sinyali monitöre hangi kablolarla aktarılabilir?",
+          "options": [
+            "HDMI veya DisplayPort",
+            "Ses jakı",
+            "Güç fişi",
+            "Kulaklık kablosu"
+          ],
+          "answer": 0,
+          "explanation": "HDMI ve DisplayPort kabloları yüksek çözünürlüklü dijital görüntü taşır."
+        },
+        {
+          "question": "Ekran üzerindeki görüntüyü oluşturan en küçük renkli noktalara ne ad verilir?",
+          "options": [
+            "Piksel (Pixel)",
+            "Gigabayt",
+            "Volt",
+            "Soket"
+          ],
+          "answer": 0,
+          "explanation": "Milyonlarca küçük piksel bir araya gelerek ekrandaki yazıları ve resimleri oluşturur."
+        }
+      ],
       "missions": [],
       "model3d": "/models/monitor.glb"
     },
@@ -759,7 +1099,41 @@
       "importantInfo": "",
       "summary": "Bilgisayardaki dijital metin ve fotoğrafları kağıt üzerine basarak dışarı aktaran çıkış birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Yazıcı (Printer) ne işe yarar?",
+          "options": [
+            "Bilgisayardaki dijital belgeleri kağıda basarak çıktı verir",
+            "Kağıttaki resmi bilgisayara yükler",
+            "Sesleri kaydeder",
+            "İnternet yayını yapar"
+          ],
+          "answer": 0,
+          "explanation": "Yazıcı dijital metin ve görselleri kağıt üzerine basarak dış ortama aktarır."
+        },
+        {
+          "question": "Yazıcı hangi donanım kategorisindedir?",
+          "options": [
+            "Çıkış Birimi",
+            "Giriş Birimi",
+            "Bellek",
+            "İşlemci"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayardaki bilgiyi dış ortama (kağıda) aktardığı için Çıkış Birimidir."
+        },
+        {
+          "question": "Hazırladığımız bir ödevin veya projenin kağıt halini almak için hangi donanımı kullanırız?",
+          "options": [
+            "Yazıcı",
+            "Tarayıcı",
+            "Mikrofon",
+            "Webcam"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayarda yazılan ödev yazıcıdan yazdırılarak kağıt olarak teslim edilir."
+        }
+      ],
       "missions": [],
       "model3d": "/models/printer.glb"
     },
@@ -773,7 +1147,41 @@
       "importantInfo": "",
       "summary": "Bilgisayardaki dijital ses sinyallerini duyabileceğimiz ses dalgalarına çeviren çıkış birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Hoparlör hangi donanım kategorisine girer?",
+          "options": [
+            "Çıkış Birimi",
+            "Giriş Birimi",
+            "Depolama Birimi",
+            "Soğutma Birimi"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayardaki ses verilerini dışarıya duyulabilir ses olarak verdiği için Çıkış Birimidir."
+        },
+        {
+          "question": "Hoparlörün temel görevi nedir?",
+          "options": [
+            "Bilgisayardaki ses ve müzikleri ortama dinletmek",
+            "Mikrofon gibi ses kaydetmek",
+            "Yazı yazmak",
+            "Elektrik depolamak"
+          ],
+          "answer": 0,
+          "explanation": "Hoparlör elektrik sinyallerini titreşimle ses dalgalarına dönüştürür."
+        },
+        {
+          "question": "Bilgisayarda video izlerken ses duyamıyorsak öncelikle hangi donanımı kontrol etmeliyiz?",
+          "options": [
+            "Hoparlör veya ses aygıtı bağlantısını",
+            "Klavyeyi",
+            "Farenin pilini",
+            "Tarayıcıyı"
+          ],
+          "answer": 0,
+          "explanation": "Sesin dışarı aktarılmasını hoparlör sağlar; kablosu veya ses düzeyi kontrol edilmelidir."
+        }
+      ],
       "missions": [],
       "model3d": "/models/studio_speaker.glb"
     },
@@ -787,7 +1195,41 @@
       "importantInfo": "",
       "summary": "Seslerin sadece dinleyen kişi tarafından duyulmasını sağlayan kişisel ses çıkış birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Kulaklık hangi amaçla kullanılan bir çıkış birimidir?",
+          "options": [
+            "Sesi başkalarını rahatsız etmeden kişisel olarak dinlemek",
+            "Kağıda resim çizmek",
+            "Bilgisayara ses kaydetmek",
+            "Ekrana görüntü vermek"
+          ],
+          "answer": 0,
+          "explanation": "Kulaklık ses dalgalarını doğrudan kulağımıza ileterek kişisel dinleme sağlar."
+        },
+        {
+          "question": "Kulaklık neden Çıkış Birimi olarak sınıflandırılır?",
+          "options": [
+            "Bilgisayardaki ses bilgisini dışarıya ilettiği için",
+            "Komut yazdığı için",
+            "Elektrik ürettiği için",
+            "Dosya sakladığı için"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayardan kullanıcıya ses aktardığı için Çıkış Birimidir."
+        },
+        {
+          "question": "Kulaklığın üzerinde konuşmak için bir mikrofon parçası varsa bu kulaklık seti nasıl değerlendirilir?",
+          "options": [
+            "Kulaklık kısmı çıkış, mikrofon kısmı giriş birimidir",
+            "Sadece klavye sayılır",
+            "Sadece monitör sayılır",
+            "Depolama birimi sayılır"
+          ],
+          "answer": 0,
+          "explanation": "Mikrofonlu kulaklıklarda mikrofon ses girişi, kulaklık ise ses çıkışı sağlar."
+        }
+      ],
       "missions": [],
       "model3d": "/models/headphones.glb"
     },
@@ -801,7 +1243,41 @@
       "importantInfo": "",
       "summary": "Görüntüyü büyük bir yüzeye yansıtır.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Projeksiyon cihazının okullardaki ve sınıflardaki temel görevi nedir?",
+          "options": [
+            "Bilgisayar ekranındaki görüntüyü duvara veya perdeye büyüterek yansıtmak",
+            "Ses kaydetmek",
+            "Kağıt taramak",
+            "Dosya saklamak"
+          ],
+          "answer": 0,
+          "explanation": "Projeksiyon cihazı güçlü ışığıyla bilgisayar ekranını büyük yüzeylere yansıtır."
+        },
+        {
+          "question": "Projeksiyon cihazı hangi donanım birimidir?",
+          "options": [
+            "Çıkış Birimi",
+            "Giriş Birimi",
+            "İşlemci",
+            "Bellek"
+          ],
+          "answer": 0,
+          "explanation": "Görüntüyü dış ortama yansıttığı için Çıkış Birimidir."
+        },
+        {
+          "question": "Kalabalık bir sınıfa sunum yaparken görüntünün herkes tarafından görülebilmesi için ne kullanılır?",
+          "options": [
+            "Projeksiyon cihazı",
+            "Tarayıcı",
+            "Fare",
+            "Kulaklık"
+          ],
+          "answer": 0,
+          "explanation": "Projeksiyon cihazı görüntüyü devasa boyutlarda perdeye aktararak herkesin görmesini sağlar."
+        }
+      ],
       "missions": []
     },
     {
@@ -814,7 +1290,41 @@
       "importantInfo": "",
       "summary": "Hem bilgisayardan içine dosya yüklenebilen (çıkış) hem de bilgisayara dosya aktarabilen (giriş) taşınabilir flash bellek birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "USB Bellek neden 'Hem Giriş Hem Çıkış Birimi' olarak kabul edilir?",
+          "options": [
+            "İçine dosya yüklenebilir (çıkış) ve içindeki dosyalar bilgisayara aktarılabilir (giriş)",
+            "Sadece müzik çalabildiği için",
+            "Ekrana görüntü verdiği için",
+            "Elektrik ürettiği için"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayardan USB'ye dosya kopyalamak çıkış, USB'den bilgisayara dosya açmak giriş işlemidir."
+        },
+        {
+          "question": "USB belleklerin en büyük avantajı nedir?",
+          "options": [
+            "Küçük, taşınabilir ve pratik olması",
+            "Ağır olması",
+            "İnternetsiz çalışmaması",
+            "Kağıda baskı yapması"
+          ],
+          "answer": 0,
+          "explanation": "Cepte veya anahtarlıkta kolayca taşınabilir ve her bilgisayara takılabilir."
+        },
+        {
+          "question": "USB belleğin bilgisayardan güvenle çıkarılması için ne yapılmalıdır?",
+          "options": [
+            "İşletim sisteminden 'Güvenle Kaldır' seçeneği kullanılmalıdır",
+            "Hemen aniden çekilmelidir",
+            "Bilgisayar kırılmalıdır",
+            "Monitör kapatılmalıdır"
+          ],
+          "answer": 0,
+          "explanation": "Veri kaybı ve dosya bozulmasını önlemek için Donanımı Güvenle Kaldır kullanılır."
+        }
+      ],
       "missions": [],
       "model3d": "/models/usb_flash_drive.glb"
     },
@@ -828,7 +1338,41 @@
       "importantInfo": "",
       "summary": "Verileri harici olarak saklamak ve taşımak için kullanılır.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Harici sabit diskin (Harici HDD) kullanım amacı nedir?",
+          "options": [
+            "Büyük miktarda veriyi taşınabilir olarak depolamak ve yedeklemek",
+            "Bilgisayara ses vermek",
+            "Ekrana renk vermek",
+            "İnternet hızını ölçmek"
+          ],
+          "answer": 0,
+          "explanation": "Harici HDD, yüksek depolama kapasitesiyle taşınabilir yedekleme sağlar."
+        },
+        {
+          "question": "Harici HDD bilgisayara genellikle hangi bağlantı noktasıyla bağlanır?",
+          "options": [
+            "USB bağlantı noktası",
+            "Kulaklık deliği",
+            "Mikrofon girişi",
+            "Kağıt tepsisi"
+          ],
+          "answer": 0,
+          "explanation": "Harici diskler USB kablosuyla bilgisayara takılıp anında kullanılır."
+        },
+        {
+          "question": "Harici diskler neden hem giriş hem çıkış birimidir?",
+          "options": [
+            "Bilgisayardan dosya alabilir ve bilgisayara dosya aktarabilir",
+            "Sadece müzik çalar",
+            "Sadece resim çeker",
+            "Sadece elektrik tüketir"
+          ],
+          "answer": 0,
+          "explanation": "Çift yönlü veri transferi (okuma ve yazma) yapabildiği için hem giriş hem çıkış birimidir."
+        }
+      ],
       "missions": []
     },
     {
@@ -841,7 +1385,41 @@
       "importantInfo": "",
       "summary": "Hızlı taşınabilir veri depolama sağlar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Harici SSD'nin geleneksel harici HDD'ye göre en büyük üstünlüğü nedir?",
+          "options": [
+            "Çok daha yüksek okuma/yazma hızı ve darbelere dayanıklılık",
+            "İçinde dönen plakaların olması",
+            "Daha ağır olması",
+            "Ses çıkarması"
+          ],
+          "answer": 0,
+          "explanation": "SSD içinde hareketli mekanik parça olmadığı için çok hızlıdır ve sarsıntılara karşı dayanıklıdır."
+        },
+        {
+          "question": "Harici SSD hangi birim sınıfına aittir?",
+          "options": [
+            "Hem Giriş Hem Çıkış Birimi",
+            "Sadece Giriş Birimi",
+            "Sadece Soğutma Birimi",
+            "Sadece Çıkış Birimi"
+          ],
+          "answer": 0,
+          "explanation": "Veri kaydetme (yazma) ve veri okuma yapabildiği için çift yönlü birimdir."
+        },
+        {
+          "question": "Yüksek boyutlu bir videoyu saniyeler içinde bilgisayardan diske aktarmak için hangisi en uygundur?",
+          "options": [
+            "Harici SSD",
+            "Disket",
+            "CD",
+            "Kulaklık"
+          ],
+          "answer": 0,
+          "explanation": "Harici SSD'ler saniyede yüzlerce megabayt aktarım hızı sunar."
+        }
+      ],
       "missions": []
     },
     {
@@ -854,7 +1432,41 @@
       "importantInfo": "",
       "summary": "Fotoğraf, video ve dosya gibi verileri saklar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Hafıza kartları (SD/MicroSD) en çok hangi cihazlarda kullanılır?",
+          "options": [
+            "Fotoğraf makineleri, cep telefonları ve tabletler",
+            "Sadece klavyeler",
+            "Sadece monitörler",
+            "Sadece hoparlörler"
+          ],
+          "answer": 0,
+          "explanation": "Hafıza kartları küçük boyutları sayesinde taşınabilir cihazlarda bellek görevi görür."
+        },
+        {
+          "question": "Hafıza kartı neden hem giriş hem çıkış birimidir?",
+          "options": [
+            "Hem veri kaydedilebilir hem de içindeki veriler okunabilir",
+            "Sadece yazı yazar",
+            "Sadece ses çıkarır",
+            "Sadece ekranı aydınlatır"
+          ],
+          "answer": 0,
+          "explanation": "Çift yönlü veri akışını desteklediği için hem giriş hem çıkış birimidir."
+        },
+        {
+          "question": "Bir fotoğraf makinesindeki fotoğrafları bilgisayara aktarmak için ne kullanılır?",
+          "options": [
+            "Hafıza kartı ve kart okuyucu",
+            "Hoparlör",
+            "Yazıcı",
+            "İşlemci soğutucusu"
+          ],
+          "answer": 0,
+          "explanation": "Fotoğraf makinesindeki SD kart, kart okuyucuya takılarak bilgisayara aktarılır."
+        }
+      ],
       "missions": []
     },
     {
@@ -867,7 +1479,41 @@
       "importantInfo": "",
       "summary": "Kablolu ağ bağlantısı sağlar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Ethernet kartının (Ağ Kartı) bilgisayardaki görevi nedir?",
+          "options": [
+            "Bilgisayarın yerel ağa ve kabloyla internete bağlanmasını sağlamak",
+            "Ekrana görüntü vermek",
+            "Kağıda baskı yapmak",
+            "Bilgisayarı soğutmak"
+          ],
+          "answer": 0,
+          "explanation": "Ağ kartı bilgisayarın ağ kablosu üzerinden veri alışverişi yapmasını sağlar."
+        },
+        {
+          "question": "Ethernet kartına bağlanan ağ kablosunun ucundaki standart konnektörün adı nedir?",
+          "options": [
+            "RJ-45",
+            "USB",
+            "HDMI",
+            "VGA"
+          ],
+          "answer": 0,
+          "explanation": "Standart ağ kablolarının ucunda 8 pinli RJ-45 jakı bulunur."
+        },
+        {
+          "question": "Ethernet kartı hangi donanım kategorisindedir?",
+          "options": [
+            "Ağ Donanımı",
+            "Görüntü Birimi",
+            "Güç Birimi",
+            "Soğutma Birimi"
+          ],
+          "answer": 0,
+          "explanation": "Bilgisayarlar arası iletişimi sağladığı için Ağ kategorisindedir."
+        }
+      ],
       "missions": [],
       "model3d": "/models/ethernet-to-pcie.glb"
     },
@@ -881,7 +1527,41 @@
       "importantInfo": "",
       "summary": "Kablosuz ağlara bağlanmayı sağlar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Wi-Fi adaptörünün temel işlevi nedir?",
+          "options": [
+            "Bilgisayarın kablosuz olarak internete ve modeme bağlanmasını sağlamak",
+            "Bilgisayara ses kaydetmek",
+            "Kağıt basmak",
+            "Ekranı büyütmek"
+          ],
+          "answer": 0,
+          "explanation": "Wi-Fi adaptörü radyo dalgalarıyla kablosuz ağ iletişimi kurar."
+        },
+        {
+          "question": "Masaüstü bir bilgisayarda dahili Wi-Fi yoksa kablosuz internete bağlanmak için ne takılabilir?",
+          "options": [
+            "USB Wi-Fi Adaptörü",
+            "Hoparlör",
+            "Yazıcı",
+            "Mikrofon"
+          ],
+          "answer": 0,
+          "explanation": "USB portuna takılan küçük bir Wi-Fi adaptörü bilgisayara kablosuz yeteneği kazandırır."
+        },
+        {
+          "question": "Wi-Fi adaptörü hangi kategoride yer alır?",
+          "options": [
+            "Ağ",
+            "Giriş Birimi",
+            "Soğutma",
+            "Bellek"
+          ],
+          "answer": 0,
+          "explanation": "Ağ iletişimi sağladığı için Ağ kategorisindedir."
+        }
+      ],
       "missions": []
     },
     {
@@ -894,7 +1574,41 @@
       "importantInfo": "",
       "summary": "İnternet hizmeti ile yerel ağ arasındaki bağlantıda görev alır.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Modemin temel görevi nedir?",
+          "options": [
+            "İnternet servis sağlayıcısından gelen sinyalleri bilgisayarın anlayacağı dijital sinyale çevirir",
+            "Sadece müzik çalar",
+            "Kağıt tarar",
+            "Ekranı temizler"
+          ],
+          "answer": 0,
+          "explanation": "Modem telefon hattı veya fiberden gelen sinyali dijital veriye dönüştürerek internet erişimi sağlar."
+        },
+        {
+          "question": "Evde veya okulda internete bağlanmak için kullanılan ana kutu cihaz hangisidir?",
+          "options": [
+            "Modem",
+            "Tarayıcı",
+            "Yazıcı",
+            "Kulaklık"
+          ],
+          "answer": 0,
+          "explanation": "Modem internet bağlantısını karşılayan ana cihazdır."
+        },
+        {
+          "question": "Modem üzerinde internet bağlantısının durumunu gösteren ışıklara ne ad verilir?",
+          "options": [
+            "LED bildirim ışıkları",
+            "Piksel",
+            "Termal macun",
+            "Soket"
+          ],
+          "answer": 0,
+          "explanation": "LED ışıklar (Power, DSL, Internet, Wi-Fi) bağlantının çalışıp çalışmadığını gösterir."
+        }
+      ],
       "missions": []
     },
     {
@@ -907,7 +1621,41 @@
       "importantInfo": "",
       "summary": "Ağlar arasında veri paketlerinin yönlendirilmesine ve yerel ağın oluşturulmasına yardımcı olur.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Yönlendiricinin (Router) ağdaki temel görevi nedir?",
+          "options": [
+            "Ağdaki veri paketlerini en uygun yoldan doğru cihazlara iletmek ve yönlendirmek",
+            "Bilgisayara güç vermek",
+            "Belge yazdırmak",
+            "Ses kaydetmek"
+          ],
+          "answer": 0,
+          "explanation": "Router gelen veri trafiğini yönlendirerek cihazların interneti paylaşmasını sağlar."
+        },
+        {
+          "question": "Birden fazla bilgisayarın aynı internet bağlantısını paylaşmasını hangi cihaz organize eder?",
+          "options": [
+            "Yönlendirici (Router)",
+            "Ekran kartı",
+            "İşlemci soğutucusu",
+            "Kasa"
+          ],
+          "answer": 0,
+          "explanation": "Router IP adresleri dağıtarak ağ trafiğini yönetir."
+        },
+        {
+          "question": "Yönlendirici hangi donanım kategorisindedir?",
+          "options": [
+            "Ağ Donanımı",
+            "Giriş Birimi",
+            "Depolama Birimi",
+            "Soğutma Birimi"
+          ],
+          "answer": 0,
+          "explanation": "Ağ cihazları arasında veri yönlendirmesi yaptığı için Ağ kategorisindedir."
+        }
+      ],
       "missions": [],
       "model3d": "/models/router.glb"
     },
@@ -921,7 +1669,41 @@
       "importantInfo": "",
       "summary": "Aynı yerel ağdaki cihazların kablolu olarak birbirine bağlanmasını sağlar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Ağ Anahtarının (Switch) okuldaki bilgisayar laboratuvarındaki görevi nedir?",
+          "options": [
+            "Aynı ortamdaki çok sayıda bilgisayarı kablolarla birbirine bağlayıp yerel ağ kurmak",
+            "Elektrik üretmek",
+            "Fotoğraf çekmek",
+            "Ekranı büyütmek"
+          ],
+          "answer": 0,
+          "explanation": "Switch üzerinde onlarca ethernet portu barındırır ve tüm bilgisayarları birbirine bağlar."
+        },
+        {
+          "question": "Switch hangi donanım kategorisine aittir?",
+          "options": [
+            "Ağ",
+            "Çıkış Birimi",
+            "Giriş Birimi",
+            "İşlem"
+          ],
+          "answer": 0,
+          "explanation": "Ağ cihazlarını birbirine bağladığı için Ağ kategorisindedir."
+        },
+        {
+          "question": "Bilişim sınıfındaki 20 bilgisayarın birbirleriyle dosya paylaşabilmesi için hepsi nereye kablo ile bağlanır?",
+          "options": [
+            "Ağ Anahtarına (Switch)",
+            "Yazıcıya",
+            "Farenin arkasına",
+            "Mikrofona"
+          ],
+          "answer": 0,
+          "explanation": "Switch laboratuvardaki tüm bilgisayarları ortak bir yerel ağda buluşturur."
+        }
+      ],
       "missions": []
     },
     {
@@ -934,7 +1716,41 @@
       "importantInfo": "",
       "summary": "Ağ cihazları arasında kablolu veri iletişimi sağlar.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "Ethernet kablosunun görevi nedir?",
+          "options": [
+            "Bilgisayar ile modem veya ağ anahtarı arasında kablolu yüksek hızlı veri iletmek",
+            "Bilgisayara elektrik vermek",
+            "Ekrana görüntü aktarmak",
+            "Sesleri hoparlöre iletmek"
+          ],
+          "answer": 0,
+          "explanation": "Ethernet kablosu içindeki bükümlü bakır tellerle ağ sinyallerini taşır."
+        },
+        {
+          "question": "Kablolu internet bağlantısının Wi-Fi'a (kablosuz) göre en belirgin avantajı nedir?",
+          "options": [
+            "Daha kararlı, kesintisiz ve hızlı veri iletimi sağlaması",
+            "Görünmez olması",
+            "Kablosuz olması",
+            "Pille çalışması"
+          ],
+          "answer": 0,
+          "explanation": "Kablolu bağlantı duvarlardan ve parazitlerden etkilenmez, çok kararlıdır."
+        },
+        {
+          "question": "Ethernet kablolarında en yaygın kullanılan uç konektörü hangisidir?",
+          "options": [
+            "RJ-45",
+            "USB Type-C",
+            "HDMI",
+            "VGA"
+          ],
+          "answer": 0,
+          "explanation": "Ağ kablolarının ucunda 8 pinli plastik RJ-45 konnektörü bulunur."
+        }
+      ],
       "missions": [],
       "model3d": "/models/ethernet-plug.glb"
     },
@@ -948,7 +1764,41 @@
       "importantInfo": "",
       "summary": "Optik diskler üzerinden hem veri okunabildiği (giriş) hem de yeni veri yazılabildiği (çıkış) için hem giriş hem çıkış birimidir.",
       "hotspots": [],
-      "questions": [],
+      "questions": [
+        {
+          "question": "CD ve DVD'ler hangi donanım kategorisine girer?",
+          "options": [
+            "Hem Giriş Hem Çıkış Birimi",
+            "Sadece Soğutma Birimi",
+            "Sadece Güç Birimi",
+            "Sadece Ağ Birimi"
+          ],
+          "answer": 0,
+          "explanation": "Üzerine lazerle veri yazılabildiği (çıkış) ve okunabildiği (giriş) için hem giriş hem çıkış birimidir."
+        },
+        {
+          "question": "CD ve DVD'ler verileri hangi teknolojiyle okur ve yazar?",
+          "options": [
+            "Lazer ışığı (Optik teknoloji)",
+            "Mürekkep püskürterek",
+            "Radyo dalgalarıyla",
+            "Su buharıyla"
+          ],
+          "answer": 0,
+          "explanation": "Optik disk sürücüsü lazer ışınıyla diskin yüzeyindeki izleri okur ve yazar."
+        },
+        {
+          "question": "Standart bir DVD standart bir CD'ye göre ne avantaj sağlar?",
+          "options": [
+            "Çok daha fazla veri (yaklaşık 4.7 GB) depolayabilir",
+            "Daha küçüktür",
+            "Kare şeklindedir",
+            "Bilgisayarı soğutur"
+          ],
+          "answer": 0,
+          "explanation": "Standart bir CD 700 MB iken, standart bir DVD yaklaşık 4.7 GB (yaklaşık 7 kat) veri saklar."
+        }
+      ],
       "missions": [],
       "model3d": "/models/cd.glb"
     }

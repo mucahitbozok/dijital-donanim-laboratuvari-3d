@@ -34,11 +34,14 @@ export const storageService = {
             hdd: 'Hem Giriş Hem Çıkış Birimi'
           };
 
-          // Merge any newly introduced default model3d paths and migrate categories
+          // Merge any newly introduced default model3d paths, questions, and migrate categories
           parsed.hardware = parsed.hardware.map((item: any) => {
             const defaultItem = initialHardwareData.hardware.find(d => d.id === item.id);
             if (defaultItem && (!item.model3d || isMigrating)) {
               item.model3d = defaultItem.model3d;
+            }
+            if (defaultItem && (!item.questions || item.questions.length === 0)) {
+              item.questions = defaultItem.questions;
             }
             if (hardSpecificCatMap[item.id]) {
               item.category = hardSpecificCatMap[item.id];
