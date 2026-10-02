@@ -57,6 +57,63 @@ export const AdminModal: React.FC<Props> = ({
   const [editingCategory, setEditingCategory] = useState<{ original: string; current: string } | null>(null);
   const [quickAddCatInput, setQuickAddCatInput] = useState('');
   const [showQuickAddCat, setShowQuickAddCat] = useState(false);
+  const [assignModalCategory, setAssignModalCategory] = useState<string | null>(null);
+  const [newHardwareNameInCat, setNewHardwareNameInCat] = useState('');
+
+  // Toggle hardware assignment to category
+  const handleToggleHardwareCategory = (hardwareId: string, targetCat: string) => {
+    soundService.playClick();
+    const fallbackCategory = categories.find(c => c !== targetCat) || 'Genel';
+    setHardwareList(prev => prev.map(h => {
+      if (h.id === hardwareId) {
+        const nextCat = h.category === targetCat ? fallbackCategory : targetCat;
+        return { ...h, category: nextCat };
+      }
+      return h;
+    }));
+
+    if (selectedItem.id === hardwareId) {
+      setSelectedItem(prev => ({
+        ...prev,
+        category: prev.category === targetCat ? fallbackCategory : targetCat
+      }));
+    }
+  };
+
+  // Remove hardware from category directly from pill "x"
+  const handleRemoveHardwareFromCategory = (hardwareId: string, currentCat: string) => {
+    soundService.playClick();
+    const fallbackCategory = categories.find(c => c !== currentCat) || 'Genel';
+    setHardwareList(prev => prev.map(h => h.id === hardwareId ? { ...h, category: fallbackCategory } : h));
+    if (selectedItem.id === hardwareId) {
+      setSelectedItem(prev => ({ ...prev, category: fallbackCategory }));
+    }
+  };
+
+  // Create a brand new hardware item directly under this category and navigate to it
+  const handleCreateHardwareInCat = (targetCat: string) => {
+    const rawName = newHardwareNameInCat.trim() || 'Yeni Donanım Parçası';
+    soundService.playCorrect();
+    const newId = `custom_${Date.now()}`;
+    const newItem: HardwareItem = {
+      id: newId,
+      name: rawName,
+      category: targetCat,
+      shortDescription: 'Bu donanım bilgisayarın önemli bir parçasıdır.',
+      function: 'Belirli görevleri yerine getirir.',
+      location: 'Bilgisayar sistemi içerisinde yer alır.',
+      importantInfo: 'Öğretmen tarafından eklenmiştir.',
+      summary: `${rawName} bileşeni.`,
+      hotspots: [],
+      questions: [],
+      missions: []
+    };
+    setHardwareList([newItem, ...hardwareList]);
+    setSelectedItem(newItem);
+    setNewHardwareNameInCat('');
+    setAssignModalCategory(null);
+    setActiveTab('hardware');
+  };
 
   // Form states for selectedItem
   const updateField = (field: keyof HardwareItem, value: any) => {
@@ -914,42 +971,80 @@ export const AdminModal: React.FC<Props> = ({
                             {assignedItems.map(item => (
                               <span
                                 key={item.id}
-                                className="text-[11px] px-2 py-0.5 rounded-md bg-lab-900 border border-slate-700/60 text-slate-300 font-medium"
+                                className="text-[11px] px-2 py-0.5 rounded-md bg-lab-900 border border-slate-700/60 text-slate-300 font-medium flex items-center gap-1.5 group/pill"
                               >
-                                {item.name}
+                                <span>{item.name}</span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemoveHardwareFromCategory(item.id, cat);
+                                  }}
+                                  className="text-slate-500 hover:text-rose-400 font-bold px-0.5 leading-none"
+                                  title={`"${item.name}" donanımını bu kategoriden çıkar`}
+                                >
+                                  ×
+                                </button>
                               </span>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-xs text-slate-500 italic">
-                            Bu kategoriye atanmış donanım yok
-                          </span>
+                          <div className="flex items-center justify-between py-1">
+                            <span className="text-xs text-slate-500 italic">
+                              Bu kategoriye atanmış donanım yok
+                            </span>
+                            <button
+                              onClick={() => {
+                                soundService.playClick();
+                                setAssignModalCategory(cat);
+                              }}
+                              className="text-xs text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1 underline"
+                            >
+                              <Plus className="w-3 h-3" />
+                              <span>Ekle</span>
+                            </button>
+                          </div>
                         )}
                       </div>
 
                       {/* Bottom row: Action Buttons */}
                       {!isEditing && (
-                        <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800/80">
+                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+                          {/* "+ Donanım Ekle" Prominent Button */}
                           <button
                             onClick={() => {
                               soundService.playClick();
-                              setEditingCategory({ original: cat, current: cat });
+                              setAssignModalCategory(cat);
                             }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition"
-                            title="Kategori Adını Değiştir"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/35 text-purple-300 hover:text-white border border-purple-500/40 text-xs font-bold transition shadow-sm"
+                            title="Bu kategoriye donanım ekle veya mevcut donanımları ata"
                           >
-                            <Edit className="w-3.5 h-3.5 text-sky-400" />
-                            <span>Adı Değiştir</span>
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Donanım Ekle</span>
                           </button>
 
-                          <button
-                            onClick={() => handleDeleteCategory(cat)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-semibold transition"
-                            title="Kategoriyi Sil"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-                            <span>Sil</span>
-                          </button>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                soundService.playClick();
+                                setEditingCategory({ original: cat, current: cat });
+                              }}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold transition"
+                              title="Kategori Adını Değiştir"
+                            >
+                              <Edit className="w-3.5 h-3.5 text-sky-400" />
+                              <span>Adı Değiştir</span>
+                            </button>
+
+                            <button
+                              onClick={() => handleDeleteCategory(cat)}
+                              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 hover:text-rose-200 border border-rose-500/30 text-xs font-semibold transition"
+                              title="Kategoriyi Sil"
+                            >
+                              <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                              <span>Sil</span>
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -957,6 +1052,127 @@ export const AdminModal: React.FC<Props> = ({
                 })}
               </div>
             </div>
+
+            {/* Assign / Add Hardware to Category Popup Dialog */}
+            {assignModalCategory && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
+                <div className="w-full max-w-2xl flex flex-col rounded-3xl bg-lab-900 border border-purple-500/50 shadow-2xl overflow-hidden max-h-[85vh]">
+                  {/* Header */}
+                  <div className="p-5 bg-lab-950 border-b border-slate-800 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                        <Tag className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-white">
+                          "{assignModalCategory}" Kategorisine Donanım Ekle
+                        </h3>
+                        <p className="text-xs text-slate-400">
+                          Mevcut donanımları bu kategoriye atayabilir veya yeni bir donanım oluşturabilirsiniz.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setAssignModalCategory(null)}
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Body */}
+                  <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1 text-left">
+                    {/* 1. Quick Add New Hardware under this Category */}
+                    <div className="p-4 rounded-2xl bg-lab-850 border border-purple-500/30 space-y-3">
+                      <label className="block text-xs font-bold text-purple-300 uppercase tracking-wider">
+                        ➕ Bu Kategoride Sıfırdan Yeni Donanım Oluştur:
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Yeni donanımın adı (Örn: Ses Kartı, Barkod Okuyucu...)"
+                          value={newHardwareNameInCat}
+                          onChange={(e) => setNewHardwareNameInCat(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleCreateHardwareInCat(assignModalCategory);
+                          }}
+                          className="flex-1 p-2.5 rounded-xl bg-lab-900 border border-slate-700 text-white font-semibold text-sm outline-none focus:border-purple-500 placeholder-slate-500"
+                        />
+                        <button
+                          onClick={() => handleCreateHardwareInCat(assignModalCategory)}
+                          className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5 whitespace-nowrap min-h-[42px]"
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Oluştur ve Düzenle</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 2. Assign / Move Existing Hardware */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                          <Cpu className="w-4 h-4 text-sky-400" />
+                          <span>Mevcut Donanımlardan Ata ({hardwareList.length} Donanım):</span>
+                        </label>
+                        <span className="text-[11px] text-slate-400">
+                          Tıklayarak kategoriye ekleyin veya çıkarın
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-72 overflow-y-auto custom-scrollbar p-1">
+                        {hardwareList.map((h) => {
+                          const isInThisCat = h.category === assignModalCategory;
+                          return (
+                            <div
+                              key={h.id}
+                              onClick={() => handleToggleHardwareCategory(h.id, assignModalCategory)}
+                              className={`p-3 rounded-xl border transition-all flex items-center justify-between cursor-pointer select-none ${
+                                isInThisCat
+                                  ? 'bg-purple-600/20 border-purple-500 text-white ring-1 ring-purple-500/40'
+                                  : 'bg-lab-850 hover:bg-lab-800 border-slate-800 text-slate-300 hover:border-slate-700'
+                              }`}
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className={`w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold transition ${
+                                  isInThisCat ? 'bg-purple-500 text-white' : 'border border-slate-600 text-transparent'
+                                }`}>
+                                  ✓
+                                </div>
+                                <div className="truncate">
+                                  <span className="font-bold text-sm block truncate">{h.name}</span>
+                                  <span className="text-[10px] text-slate-400 block truncate">
+                                    {isInThisCat ? 'Bu kategoride' : `Şu an: ${h.category}`}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <span className={`text-[10px] px-2 py-0.5 rounded font-bold whitespace-nowrap ${
+                                isInThisCat
+                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                  : 'bg-slate-800 text-slate-400'
+                              }`}>
+                                {isInThisCat ? 'Eklendi' : 'Ekle'}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="p-4 bg-lab-950 border-t border-slate-800 flex items-center justify-end">
+                    <button
+                      onClick={() => setAssignModalCategory(null)}
+                      className="px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition"
+                    >
+                      Tamamla
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
