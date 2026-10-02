@@ -131,7 +131,73 @@ export const HardwareSelector: React.FC<Props> = ({
     soundService.playClick();
   };
 
-  // Pointer drag event handlers for mouse and touch/smartboard
+  // Global pointer move & up listeners for smooth drag-to-scroll anywhere on screen
+  useEffect(() => {
+    const handleGlobalPointerMove = (e: PointerEvent) => {
+      if (!isPointerDown.current) return;
+      const el = scrollContainerRef.current;
+      if (!el) return;
+
+      const currentX = e.clientX;
+      const deltaX = currentX - startX.current;
+
+      // Only consider it a drag if moved more than 10px (prevents accidental drag on tap)
+      if (Math.abs(deltaX) > 10) {
+        hasMoved.current = true;
+        setIsGrabbing(true);
+      }
+
+      if (hasMoved.current) {
+        el.scrollLeft = startScrollLeft.current - deltaX;
+
+        // Track instantaneous velocity for natural momentum glide
+        const now = performance.now();
+        const dt = now - lastPointerTime.current;
+        if (dt > 10) {
+          velocityX.current = (currentX - lastPointerX.current) / dt;
+          lastPointerX.current = currentX;
+          lastPointerTime.current = now;
+        }
+      }
+    };
+
+    const handleGlobalPointerUp = () => {
+      if (!isPointerDown.current) return;
+      isPointerDown.current = false;
+      setIsGrabbing(false);
+
+      const el = scrollContainerRef.current;
+      if (el && Math.abs(velocityX.current) > 0.15 && hasMoved.current) {
+        let vel = velocityX.current * -16;
+        const decay = 0.92;
+        const step = () => {
+          if (!el || Math.abs(vel) < 0.5) return;
+          el.scrollLeft += vel;
+          vel *= decay;
+          momentumAnimId.current = requestAnimationFrame(step);
+        };
+        momentumAnimId.current = requestAnimationFrame(step);
+      }
+
+      // If user was dragging, keep hasMoved true briefly so trailing click doesn't trigger selection
+      if (hasMoved.current) {
+        setTimeout(() => {
+          hasMoved.current = false;
+        }, 120);
+      }
+    };
+
+    window.addEventListener('pointermove', handleGlobalPointerMove);
+    window.addEventListener('pointerup', handleGlobalPointerUp);
+    window.addEventListener('pointercancel', handleGlobalPointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handleGlobalPointerMove);
+      window.removeEventListener('pointerup', handleGlobalPointerUp);
+      window.removeEventListener('pointercancel', handleGlobalPointerUp);
+    };
+  }, []);
+
+  // Pointer drag start
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Only primary button
     if (e.button !== 0 && e.pointerType === 'mouse') return;
@@ -148,68 +214,6 @@ export const HardwareSelector: React.FC<Props> = ({
     lastPointerX.current = e.clientX;
     lastPointerTime.current = performance.now();
     velocityX.current = 0;
-    setIsGrabbing(true);
-
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch (_) {}
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isPointerDown.current) return;
-    const el = scrollContainerRef.current;
-    if (!el) return;
-
-    const currentX = e.clientX;
-    const deltaX = currentX - startX.current;
-
-    if (Math.abs(deltaX) > 6) {
-      hasMoved.current = true;
-    }
-
-    el.scrollLeft = startScrollLeft.current - deltaX;
-
-    // Track instantaneous velocity for natural momentum glide
-    const now = performance.now();
-    const dt = now - lastPointerTime.current;
-    if (dt > 10) {
-      velocityX.current = (currentX - lastPointerX.current) / dt;
-      lastPointerX.current = currentX;
-      lastPointerTime.current = now;
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isPointerDown.current) return;
-    isPointerDown.current = false;
-    setIsGrabbing(false);
-
-    try {
-      if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      }
-    } catch (_) {}
-
-    // Apply natural momentum deceleration if user swiped with velocity
-    const el = scrollContainerRef.current;
-    if (el && Math.abs(velocityX.current) > 0.15 && hasMoved.current) {
-      let vel = velocityX.current * -16;
-      const decay = 0.92;
-      const step = () => {
-        if (!el || Math.abs(vel) < 0.5) return;
-        el.scrollLeft += vel;
-        vel *= decay;
-        momentumAnimId.current = requestAnimationFrame(step);
-      };
-      momentumAnimId.current = requestAnimationFrame(step);
-    }
-
-    // Keep hasMoved flag briefly to swallow the trailing click event
-    if (hasMoved.current) {
-      setTimeout(() => {
-        hasMoved.current = false;
-      }, 90);
-    }
   };
 
   // Horizontal mouse wheel scrolling over carousel
@@ -222,7 +226,7 @@ export const HardwareSelector: React.FC<Props> = ({
   };
 
   const handleCardClick = (item: HardwareItem) => {
-    // If the user was dragging/sliding, do not trigger selection
+    // If user was dragging/swiping, ignore click
     if (hasMoved.current) {
       return;
     }
@@ -353,9 +357,6 @@ export const HardwareSelector: React.FC<Props> = ({
         <div
           ref={scrollContainerRef}
           onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
           onWheel={handleWheel}
           className={`flex items-center gap-3 overflow-x-auto custom-scrollbar py-2 px-1 touch-pan-y transition-colors ${
             isGrabbing ? 'cursor-grabbing select-none' : 'cursor-grab'
@@ -370,6 +371,7 @@ export const HardwareSelector: React.FC<Props> = ({
               <button
                 key={item.id}
                 data-id={item.id}
+                type="button"
                 onClick={() => handleCardClick(item)}
                 draggable={false}
                 style={
