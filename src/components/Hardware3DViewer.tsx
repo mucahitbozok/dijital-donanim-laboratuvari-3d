@@ -248,13 +248,33 @@ export const Hardware3DViewer: React.FC<Props> = ({
     candidateUrls.push(`/models/${hardware.id}.glb`);
 
     const aliases: Record<string, string[]> = {
+      cpu: ['/models/cpu.glb'],
       gpu: ['/models/graphics-card.glb', '/models/graphics_card.glb', '/models/ekran-karti.glb'],
-      motherboard: ['/models/anakart.glb', '/models/mainboard.glb'],
+      motherboard: ['/models/motherboard.glb', '/models/anakart.glb', '/models/mainboard.glb'],
+      ram: ['/models/ram.glb'],
       ssd: ['/models/storage.glb', '/models/depolama.glb'],
       hdd: ['/models/storage.glb', '/models/hard-drive.glb'],
-      psu: ['/models/power-supply.glb', '/models/power_supply.glb'],
-      case: ['/models/kasa.glb', '/models/pc-case.glb'],
-      cpu_cooler: ['/models/cooler.glb', '/models/sogutucu.glb']
+      psu: ['/models/psu.glb', '/models/power-supply.glb', '/models/power_supply.glb'],
+      case: ['/models/computer_case.glb', '/models/kasa.glb', '/models/pc-case.glb'],
+      cpu_cooler: ['/models/cooler.glb', '/models/sogutucu.glb'],
+      mouse: ['/models/mouse.glb', '/models/fare.glb'],
+      keyboard: ['/models/keyboard.glb', '/models/klavye.glb'],
+      scanner: ['/models/scanner.glb', '/models/tarayici.glb'],
+      webcam: ['/models/web-camera.glb', '/models/webcam.glb'],
+      microphone: ['/models/mic.glb', '/models/microphone.glb'],
+      mic: ['/models/mic.glb'],
+      speaker: ['/models/studio_speaker.glb', '/models/speaker.glb', '/models/hoparlor.glb'],
+      monitor: ['/models/monitor.glb', '/models/ekran.glb'],
+      printer: ['/models/printer.glb', '/models/yazici.glb'],
+      headphones: ['/models/headphones.glb', '/models/kulaklik.glb'],
+      cd_dvd: ['/models/cd.glb', '/models/cd_dvd.glb'],
+      cd: ['/models/cd.glb'],
+      usb_flash: ['/models/usb_flash_drive.glb', '/models/usb.glb', '/models/usb_flash.glb'],
+      usb: ['/models/usb_flash_drive.glb'],
+      router: ['/models/router.glb'],
+      modem: ['/models/router.glb'],
+      ethernet_cable: ['/models/ethernet-plug.glb'],
+      ethernet_card: ['/models/ethernet-to-pcie.glb']
     };
 
     if (aliases[hardware.id]) {

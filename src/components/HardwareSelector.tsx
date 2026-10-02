@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { HardwareItem } from '../types/hardware';
 import { soundService } from '../services/sound';
 import { getCategoryTheme } from '../utils/theme';
+import { defaultCategoryDescriptions } from '../data/defaultHardware';
 import {
   Cpu,
   Layers,
@@ -36,6 +37,9 @@ export const HardwareSelector: React.FC<Props> = ({
     const baseCategories = categories && categories.length > 0
       ? categories
       : [
+          'Giriş Birimi',
+          'Çıkış Birimi',
+          'Hem Giriş Hem Çıkış Birimi',
           'İşlem',
           'Bellek',
           'Görüntü',
@@ -43,9 +47,6 @@ export const HardwareSelector: React.FC<Props> = ({
           'Depolama',
           'Güç',
           'Soğutma',
-          'Giriş',
-          'Çıkış',
-          'Giriş/Çıkış',
           'Ağ'
         ];
 
@@ -81,6 +82,19 @@ export const HardwareSelector: React.FC<Props> = ({
   // Helper icon by category
   const getCategoryIcon = (category: string) => {
     switch (category) {
+      case 'Giriş':
+      case 'Giriş Birimi':
+      case 'Giriş Birimleri':
+        return <Keyboard className="w-4 h-4" />;
+      case 'Çıkış':
+      case 'Çıkış Birimi':
+      case 'Çıkış Birimleri':
+        return <Speaker className="w-4 h-4" />;
+      case 'Giriş/Çıkış':
+      case 'Hem Giriş Hem Çıkış Birimi':
+      case 'Hem Giriş Hem Çıkış Birimleri':
+      case 'Hem Giriş Hem Çıkış':
+        return <Radio className="w-4 h-4" />;
       case 'İşlem':
         return <Cpu className="w-4 h-4" />;
       case 'Bellek':
@@ -93,10 +107,6 @@ export const HardwareSelector: React.FC<Props> = ({
         return <Zap className="w-4 h-4" />;
       case 'Soğutma':
         return <Fan className="w-4 h-4" />;
-      case 'Giriş':
-        return <Keyboard className="w-4 h-4" />;
-      case 'Çıkış':
-        return <Speaker className="w-4 h-4" />;
       case 'Ağ':
         return <Wifi className="w-4 h-4" />;
       default:
@@ -105,7 +115,7 @@ export const HardwareSelector: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full bg-lab-950/95 border-t border-zinc-800/80 p-3 flex flex-col gap-2.5 backdrop-blur-xl z-20 select-none">
+    <div className="w-full bg-lab-950/95 border-t border-zinc-800/80 p-3 flex flex-col gap-2 backdrop-blur-xl z-20 select-none">
       {/* Category Pills (Horizontal Scrollable) */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
         <div className="flex items-center gap-1.5 px-2.5 text-xs font-bold text-zinc-400 uppercase tracking-wider">
@@ -138,6 +148,14 @@ export const HardwareSelector: React.FC<Props> = ({
           );
         })}
       </div>
+
+      {/* Category Educational Description Banner (Visible when a specific category is selected) */}
+      {selectedCategory !== 'Tümü' && defaultCategoryDescriptions[selectedCategory] && (
+        <div className="px-3 py-1.5 rounded-xl bg-lab-900/90 border border-zinc-800/90 text-xs flex items-center gap-2 text-zinc-300 animate-fade-in">
+          <span className="font-bold text-amber-400 flex-shrink-0">💡 {selectedCategory}:</span>
+          <span className="truncate md:whitespace-normal font-medium">{defaultCategoryDescriptions[selectedCategory]}</span>
+        </div>
+      )}
 
       {/* Hardware Items Touch Carousel */}
       <div className="flex items-center gap-3 overflow-x-auto custom-scrollbar py-1">

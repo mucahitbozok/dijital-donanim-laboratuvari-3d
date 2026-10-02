@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { HardwareDataset, HardwareItem, Hotspot, QuizQuestion } from '../types/hardware';
 import { storageService } from '../services/storage';
 import { soundService } from '../services/sound';
-import { defaultCategories } from '../data/defaultHardware';
+import { defaultCategories, defaultCategoryDescriptions } from '../data/defaultHardware';
 import {
   X,
   Settings,
@@ -961,6 +961,12 @@ export const AdminModal: React.FC<Props> = ({
                               {assignedItems.length} donanım
                             </span>
                           </div>
+                        )}
+
+                        {defaultCategoryDescriptions[cat] && !isEditing && (
+                          <p className="text-[11px] text-slate-400 mt-2 line-clamp-2 leading-relaxed font-normal" title={defaultCategoryDescriptions[cat]}>
+                            {defaultCategoryDescriptions[cat]}
+                          </p>
                         )}
                       </div>
 

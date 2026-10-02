@@ -3,6 +3,7 @@ import type { HardwareItem } from '../types/hardware';
 import { speechService } from '../services/speech';
 import { soundService } from '../services/sound';
 import { getCategoryTheme } from '../utils/theme';
+import { defaultCategoryDescriptions } from '../data/defaultHardware';
 import {
   Volume2,
   VolumeX,
@@ -66,6 +67,11 @@ export const HardwareInfoPanel: React.FC<Props> = ({
           <h2 className={`${isLargeFont ? 'text-3xl lg:text-4xl' : 'text-2xl lg:text-3xl'} font-black text-white tracking-tight leading-tight`}>
             {hardware.name}
           </h2>
+          {defaultCategoryDescriptions[hardware.category] && (
+            <p className="text-[11px] text-zinc-400 mt-1.5 leading-relaxed line-clamp-2" title={defaultCategoryDescriptions[hardware.category]}>
+              {defaultCategoryDescriptions[hardware.category]}
+            </p>
+          )}
         </div>
 
         {/* Listen (Sesli Anlatım) Button */}

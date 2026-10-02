@@ -246,7 +246,8 @@
         "GPU üzerindeki görüntü çıkışlarını bul.",
         "Soğutma fanını göster.",
         "GPU'nun hangi tür işlemlerde önemli olduğunu söyle."
-      ]
+      ],
+      "model3d": "/models/graphics-card.glb"
     },
     {
       "id": "motherboard",
@@ -359,7 +360,8 @@
         "RAM yuvalarını say.",
         "Bir PCIe yuvasını göster.",
         "M.2 ve SATA bağlantılarının yerini keşfet."
-      ]
+      ],
+      "model3d": "/models/motherboard.glb"
     },
     {
       "id": "ssd",
@@ -441,17 +443,18 @@
         "SSD'yi döndür ve bağlantı bölümünü bul.",
         "M.2 SSD ile SATA SSD arasındaki fiziksel farkı incele.",
         "SSD'nin hangi tür verileri saklayabileceğini söyle."
-      ]
+      ],
+      "model3d": "/models/storage.glb"
     },
     {
       "id": "hdd",
-      "name": "Sabit Disk (HDD)",
-      "category": "Depolama",
+      "name": "Sabit Disk (Harddisk / HDD)",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Verileri manyetik plakalar üzerinde kalıcı olarak saklayan depolama birimidir.",
       "function": "Dosyaları ve diğer verileri kalıcı olarak depolar.",
       "location": "Masaüstü bilgisayarlarda genellikle kasa içindeki sürücü bölmesine yerleştirilir.",
       "importantInfo": "HDD, verileri dönen manyetik plakalar üzerinde saklar ve hareketli mekanik parçalara sahiptir.",
-      "summary": "HDD, bilgisayarlarda kullanılan geleneksel kalıcı depolama teknolojilerinden biridir.",
+      "summary": "Bilgisayarın tüm dosyalarını depolayan; hem veri okuma (giriş) hem de veri yazma (çıkış) yapan temel depolama birimidir.",
       "hotspots": [
         {
           "id": "platter",
@@ -523,7 +526,8 @@
         "HDD'nin plakalarını keşfet.",
         "Okuma/yazma kafasını bul.",
         "HDD ile SSD arasındaki temel fiziksel farkı söyle."
-      ]
+      ],
+      "model3d": "/models/storage.glb"
     },
     {
       "id": "psu",
@@ -605,7 +609,8 @@
         "PSU üzerindeki bağlantıları incele.",
         "Fanı bul.",
         "PSU'nun bilgisayarın hangi ihtiyacını karşıladığını açıkla."
-      ]
+      ],
+      "model3d": "/models/psu.glb"
     },
     {
       "id": "cpu_cooler",
@@ -631,77 +636,83 @@
       "summary": "Bilgisayarın iç bileşenlerini korur ve bir arada tutar.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/computer_case.glb"
     },
     {
       "id": "keyboard",
       "name": "Klavye",
-      "category": "Giriş",
+      "category": "Giriş Birimi",
       "shortDescription": "Yazı, sayı ve komutların bilgisayara girilmesini sağlar.",
       "function": "Yazı, sayı ve komutların bilgisayara girilmesini sağlar.",
       "location": "Bilgisayara USB veya kablosuz bağlantıyla bağlanabilir.",
       "importantInfo": "",
-      "summary": "Yazı, sayı ve komutların bilgisayara girilmesini sağlar.",
+      "summary": "Harf, rakam ve komut tuşlarıyla bilgisayara veri girişi sağlayan temel giriş birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/keyboard.glb"
     },
     {
       "id": "mouse",
-      "name": "Fare",
-      "category": "Giriş",
+      "name": "Fare (Mouse)",
+      "category": "Giriş Birimi",
       "shortDescription": "Ekrandaki işaretçiyi kontrol etmeyi sağlar.",
       "function": "Ekrandaki işaretçiyi kontrol etmeyi sağlar.",
       "location": "Bilgisayara USB veya kablosuz bağlantıyla bağlanabilir.",
       "importantInfo": "",
-      "summary": "Ekrandaki işaretçiyi kontrol etmeyi sağlar.",
+      "summary": "Bilgisayara imleç hareketleri ve tıklama komutları gönderen temel giriş birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/mouse.glb"
     },
     {
       "id": "microphone",
       "name": "Mikrofon",
-      "category": "Giriş",
+      "category": "Giriş Birimi",
       "shortDescription": "Sesi bilgisayara aktaran giriş aygıtıdır.",
       "function": "Sesi bilgisayara aktaran giriş aygıtıdır.",
       "location": "USB, ses jakı veya kablosuz bağlantı kullanabilir.",
       "importantInfo": "",
-      "summary": "Sesi bilgisayara aktaran giriş aygıtıdır.",
+      "summary": "Ses dalgalarını elektrik sinyaline dönüştürerek bilgisayara ses girişi sağlayan birimdir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/mic.glb"
     },
     {
       "id": "webcam",
-      "name": "Web Kamera",
-      "category": "Giriş",
+      "name": "Web Kamerası (Webcam)",
+      "category": "Giriş Birimi",
       "shortDescription": "Görüntüyü bilgisayara aktaran giriş aygıtıdır.",
       "function": "Görüntüyü bilgisayara aktaran giriş aygıtıdır.",
       "location": "USB veya dahili bağlantıyla bilgisayara bağlanabilir.",
       "importantInfo": "",
-      "summary": "Görüntüyü bilgisayara aktaran giriş aygıtıdır.",
+      "summary": "Gerçek hayattaki canlı görüntü ve videoları bilgisayara aktaran giriş birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/web-camera.glb"
     },
     {
       "id": "scanner",
-      "name": "Tarayıcı",
-      "category": "Giriş",
+      "name": "Tarayıcı (Scanner)",
+      "category": "Giriş Birimi",
       "shortDescription": "Kâğıt üzerindeki belge veya görselleri dijital ortama aktarmaya yarar.",
       "function": "Kâğıt üzerindeki belge veya görselleri dijital ortama aktarmaya yarar.",
       "location": "Genellikle USB veya ağ bağlantısı kullanır.",
       "importantInfo": "",
-      "summary": "Kâğıt üzerindeki belge veya görselleri dijital ortama aktarmaya yarar.",
+      "summary": "Basılı belge ve fotoğrafları optik olarak tarayıp bilgisayara dijital resim olarak aktaran giriş birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/scanner.glb"
     },
     {
       "id": "gamepad",
       "name": "Oyun Kumandası",
-      "category": "Giriş",
+      "category": "Giriş Birimi",
       "shortDescription": "Oyunlarda kontrol komutları vermek için kullanılır.",
       "function": "Oyunlarda kontrol komutları vermek için kullanılır.",
       "location": "USB veya kablosuz bağlantı kullanabilir.",
@@ -714,7 +725,7 @@
     {
       "id": "touchscreen",
       "name": "Dokunmatik Ekran",
-      "category": "Giriş/Çıkış",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Dokunma yoluyla etkileşim sağlar ve görüntü gösterir.",
       "function": "Dokunma yoluyla etkileşim sağlar ve görüntü gösterir.",
       "location": "Monitör veya cihaz ekranının parçasıdır.",
@@ -726,60 +737,64 @@
     },
     {
       "id": "monitor",
-      "name": "Monitör",
-      "category": "Çıkış",
+      "name": "Ekran (Monitör)",
+      "category": "Çıkış Birimi",
       "shortDescription": "Bilgisayarın görüntüsünü kullanıcıya gösterir.",
       "function": "Bilgisayarın görüntüsünü kullanıcıya gösterir.",
       "location": "Bilgisayara görüntü kablosuyla bağlanır.",
       "importantInfo": "",
-      "summary": "Bilgisayarın görüntüsünü kullanıcıya gösterir.",
+      "summary": "Bilgisayarda işlenen bilgileri, görüntü ve yazıları görmemizi sağlayan temel çıkış birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/monitor.glb"
     },
     {
       "id": "printer",
-      "name": "Yazıcı",
-      "category": "Çıkış",
+      "name": "Yazıcı (Printer)",
+      "category": "Çıkış Birimi",
       "shortDescription": "Dijital belgeleri fiziksel çıktıya dönüştürür.",
       "function": "Dijital belgeleri fiziksel çıktıya dönüştürür.",
       "location": "USB veya ağ üzerinden bağlanabilir.",
       "importantInfo": "",
-      "summary": "Dijital belgeleri fiziksel çıktıya dönüştürür.",
+      "summary": "Bilgisayardaki dijital metin ve fotoğrafları kağıt üzerine basarak dışarı aktaran çıkış birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/printer.glb"
     },
     {
       "id": "speaker",
       "name": "Hoparlör",
-      "category": "Çıkış",
+      "category": "Çıkış Birimi",
       "shortDescription": "Sesleri kullanıcıya iletir.",
       "function": "Sesleri kullanıcıya iletir.",
       "location": "Kablo veya kablosuz bağlantıyla bağlanabilir.",
       "importantInfo": "",
-      "summary": "Sesleri kullanıcıya iletir.",
+      "summary": "Bilgisayardaki dijital ses sinyallerini duyabileceğimiz ses dalgalarına çeviren çıkış birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/studio_speaker.glb"
     },
     {
       "id": "headphones",
       "name": "Kulaklık",
-      "category": "Çıkış",
+      "category": "Çıkış Birimi",
       "shortDescription": "Sesi kullanıcıya iletir.",
       "function": "Sesi kullanıcıya iletir.",
       "location": "Kablo veya kablosuz bağlantı kullanabilir.",
       "importantInfo": "",
-      "summary": "Sesi kullanıcıya iletir.",
+      "summary": "Seslerin sadece dinleyen kişi tarafından duyulmasını sağlayan kişisel ses çıkış birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/headphones.glb"
     },
     {
       "id": "projector",
       "name": "Projeksiyon",
-      "category": "Çıkış",
+      "category": "Çıkış Birimi",
       "shortDescription": "Görüntüyü büyük bir yüzeye yansıtır.",
       "function": "Görüntüyü büyük bir yüzeye yansıtır.",
       "location": "Bilgisayar veya başka görüntü kaynağına bağlanır.",
@@ -792,20 +807,21 @@
     {
       "id": "usb_flash",
       "name": "USB Bellek",
-      "category": "Depolama",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Dosyaları taşımak ve saklamak için kullanılan taşınabilir depolama aygıtıdır.",
       "function": "Dosyaları taşımak ve saklamak için kullanılan taşınabilir depolama aygıtıdır.",
       "location": "USB portuna bağlanır.",
       "importantInfo": "",
-      "summary": "Dosyaları taşımak ve saklamak için kullanılan taşınabilir depolama aygıtıdır.",
+      "summary": "Hem bilgisayardan içine dosya yüklenebilen (çıkış) hem de bilgisayara dosya aktarabilen (giriş) taşınabilir flash bellek birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/usb_flash_drive.glb"
     },
     {
       "id": "external_hdd",
       "name": "Harici HDD",
-      "category": "Depolama",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Verileri harici olarak saklamak ve taşımak için kullanılır.",
       "function": "Verileri harici olarak saklamak ve taşımak için kullanılır.",
       "location": "Genellikle USB üzerinden bağlanır.",
@@ -818,7 +834,7 @@
     {
       "id": "external_ssd",
       "name": "Harici SSD",
-      "category": "Depolama",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Hızlı taşınabilir veri depolama sağlar.",
       "function": "Hızlı taşınabilir veri depolama sağlar.",
       "location": "Genellikle USB üzerinden bağlanır.",
@@ -831,7 +847,7 @@
     {
       "id": "memory_card",
       "name": "Hafıza Kartı",
-      "category": "Depolama",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Fotoğraf, video ve dosya gibi verileri saklar.",
       "function": "Fotoğraf, video ve dosya gibi verileri saklar.",
       "location": "Uyumlu kart yuvasına veya kart okuyucuya takılır.",
@@ -852,7 +868,8 @@
       "summary": "Kablolu ağ bağlantısı sağlar.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/ethernet-to-pcie.glb"
     },
     {
       "id": "wifi_adapter",
@@ -891,7 +908,8 @@
       "summary": "Ağlar arasında veri paketlerinin yönlendirilmesine ve yerel ağın oluşturulmasına yardımcı olur.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/router.glb"
     },
     {
       "id": "switch",
@@ -917,20 +935,35 @@
       "summary": "Ağ cihazları arasında kablolu veri iletişimi sağlar.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/ethernet-plug.glb"
     },
     {
       "id": "cd_dvd",
-      "name": "CD/DVD",
-      "category": "Depolama",
+      "name": "CD / DVD",
+      "category": "Hem Giriş Hem Çıkış Birimi",
       "shortDescription": "Optik disklerde veri saklamak veya okumak için kullanılır.",
       "function": "Optik disklerde veri saklamak veya okumak için kullanılır.",
       "location": "Uyumlu optik sürücüye takılır.",
       "importantInfo": "",
-      "summary": "Optik disklerde veri saklamak veya okumak için kullanılır.",
+      "summary": "Optik diskler üzerinden hem veri okunabildiği (giriş) hem de yeni veri yazılabildiği (çıkış) için hem giriş hem çıkış birimidir.",
       "hotspots": [],
       "questions": [],
-      "missions": []
+      "missions": [],
+      "model3d": "/models/cd.glb"
     }
+  ],
+  "categories": [
+    "Giriş Birimi",
+    "Çıkış Birimi",
+    "Hem Giriş Hem Çıkış Birimi",
+    "İşlem",
+    "Bellek",
+    "Görüntü",
+    "Ana Donanım",
+    "Depolama",
+    "Güç",
+    "Soğutma",
+    "Ağ"
   ]
 }

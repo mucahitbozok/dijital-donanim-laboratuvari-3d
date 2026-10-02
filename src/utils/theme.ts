@@ -1,4 +1,4 @@
-﻿export interface CategoryTheme {
+export interface CategoryTheme {
   id: string;
   name: string;
   textColor: string;
@@ -97,6 +97,8 @@ export const getCategoryTheme = (category: string) => {
         hex: '#38bdf8'
       };
     case 'Giriş':
+    case 'Giriş Birimi':
+    case 'Giriş Birimleri':
       return {
         textColor: 'text-rose-400',
         badgeBg: 'bg-rose-500/15',
@@ -109,6 +111,8 @@ export const getCategoryTheme = (category: string) => {
         hex: '#f43f5e'
       };
     case 'Çıkış':
+    case 'Çıkış Birimi':
+    case 'Çıkış Birimleri':
       return {
         textColor: 'text-fuchsia-400',
         badgeBg: 'bg-fuchsia-500/15',
@@ -121,6 +125,9 @@ export const getCategoryTheme = (category: string) => {
         hex: '#d946ef'
       };
     case 'Giriş/Çıkış':
+    case 'Hem Giriş Hem Çıkış Birimi':
+    case 'Hem Giriş Hem Çıkış Birimleri':
+    case 'Hem Giriş Hem Çıkış':
       return {
         textColor: 'text-violet-400',
         badgeBg: 'bg-violet-500/15',
