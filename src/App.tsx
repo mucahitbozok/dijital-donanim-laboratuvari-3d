@@ -29,8 +29,8 @@ export const App: React.FC = () => {
   // 5. Mobile Screen View Mode ('3d' or 'info' on mobile devices)
   const [mobileTab, setMobileTab] = useState<'3d' | 'info'>('3d');
 
-  // 6. Right Side Info Panel Visibility (Desktop / Smartboard & Fullscreen toggle)
-  const [isInfoPanelVisible, setIsInfoPanelVisible] = useState(true);
+  // 6. Right Side Info Panel Visibility (Desktop / Smartboard & Fullscreen toggle - starts closed)
+  const [isInfoPanelVisible, setIsInfoPanelVisible] = useState(false);
 
   // Auto-hide right info panel when entering fullscreen so 3D model takes full screen
   useEffect(() => {
@@ -68,6 +68,14 @@ export const App: React.FC = () => {
         onSelectMode={(mode) => setActiveMode(mode)}
         isLargeFont={isLargeFont}
         onToggleLargeFont={() => setIsLargeFont(!isLargeFont)}
+        isInfoPanelVisible={isInfoPanelVisible}
+        onToggleInfoPanel={() => {
+          setIsInfoPanelVisible(prev => {
+            const next = !prev;
+            setMobileTab(next ? 'info' : '3d');
+            return next;
+          });
+        }}
       />
 
       {/* Mobile Screen View Switcher (Visible only on mobile / small screens) */}
@@ -81,9 +89,12 @@ export const App: React.FC = () => {
 
         <div className="flex items-center p-0.5 rounded-xl bg-lab-900 border border-zinc-800 flex-shrink-0">
           <button
-            onClick={() => setMobileTab('3d')}
+            onClick={() => {
+              setMobileTab('3d');
+              setIsInfoPanelVisible(false);
+            }}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-              mobileTab === '3d'
+              !isInfoPanelVisible || mobileTab === '3d'
                 ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm'
                 : 'text-zinc-400 hover:text-white'
             }`}
@@ -97,7 +108,7 @@ export const App: React.FC = () => {
               setMobileTab('info');
             }}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-              mobileTab === 'info'
+              isInfoPanelVisible && mobileTab === 'info'
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm'
                 : 'text-zinc-400 hover:text-white'
             }`}
@@ -111,23 +122,40 @@ export const App: React.FC = () => {
       {/* Main Workspace (On Mobile: Clean Switcher; On Desktop & Smartboard: Full Side-by-Side or Collapsible 3D) */}
       <main className="flex-1 flex flex-col lg:flex-row min-h-0 relative overflow-hidden">
         {/* 3D Hardware Explorer */}
-        <div className={`flex-1 h-full relative min-h-0 ${mobileTab === '3d' ? 'flex' : (isInfoPanelVisible ? 'hidden lg:flex' : 'flex')}`}>
+        <div className={`flex-1 h-full relative min-h-0 ${!isInfoPanelVisible ? 'flex w-full' : (mobileTab === '3d' ? 'flex' : 'hidden lg:flex')}`}>
           <Hardware3DViewer
             hardware={activeHardware}
           />
-          {/* Floating button to open Info Panel ("Bilgileri Aç") */}
-          {(!isInfoPanelVisible || mobileTab === '3d') && (
-            <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-20 pointer-events-auto ${!isInfoPanelVisible ? 'flex' : 'flex lg:hidden'}`}>
+
+          {/* Floating button on 3D view: ALWAYS visible when info panel is closed */}
+          {!isInfoPanelVisible && (
+            <div className="absolute top-4 right-4 z-30 pointer-events-auto animate-fade-in">
               <button
                 onClick={() => {
                   soundService.playClick();
                   setIsInfoPanelVisible(true);
                   setMobileTab('info');
                 }}
-                className="flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-lab-900/90 hover:bg-lab-800/95 backdrop-blur-xl border border-zinc-700/80 hover:border-amber-400/60 text-xs sm:text-sm font-bold text-zinc-100 shadow-2xl active:scale-95 transition-all group"
+                className="flex items-center gap-2 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 active:scale-95 text-zinc-950 font-black text-xs sm:text-sm tracking-wide shadow-[0_0_25px_rgba(245,158,11,0.5)] transition-all border border-amber-300/80 cursor-pointer"
                 title="Donanım Bilgi Panelini Aç"
               >
-                <FileText className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-950" />
+                <span>Bilgileri Aç</span>
+              </button>
+            </div>
+          )}
+
+          {/* On mobile: if mobileTab === '3d' but infoPanel is open in background, quick button to switch */}
+          {isInfoPanelVisible && mobileTab === '3d' && (
+            <div className="lg:hidden absolute top-3 right-3 z-30 pointer-events-auto animate-fade-in">
+              <button
+                onClick={() => {
+                  soundService.playClick();
+                  setMobileTab('info');
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 text-zinc-950 font-bold text-xs shadow-xl active:scale-95"
+              >
+                <FileText className="w-3.5 h-3.5 text-zinc-950" />
                 <span>Bilgileri Aç</span>
               </button>
             </div>
@@ -136,7 +164,7 @@ export const App: React.FC = () => {
 
         {/* Dynamic Info Panel */}
         {isInfoPanelVisible && (
-          <div className={`w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-full flex-shrink-0 z-10 ${mobileTab === 'info' ? 'flex' : 'hidden lg:flex'}`}>
+          <div className={`w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-full flex-shrink-0 z-20 ${mobileTab === 'info' ? 'flex' : 'hidden lg:flex'}`}>
             <HardwareInfoPanel
               hardware={activeHardware}
               onOpenQuiz={() => setActiveMode('quiz')}
