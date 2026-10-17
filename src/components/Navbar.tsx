@@ -9,12 +9,13 @@ import {
   Minimize,
   Volume2,
   VolumeX,
-  Type
+  Type,
+  Wrench
 } from 'lucide-react';
 
 interface Props {
-  activeMode: 'inspect' | 'compare' | 'quiz' | 'admin';
-  onSelectMode: (mode: 'inspect' | 'compare' | 'quiz' | 'admin') => void;
+  activeMode: 'inspect' | 'compare' | 'quiz' | 'admin' | 'assembly';
+  onSelectMode: (mode: 'inspect' | 'compare' | 'quiz' | 'admin' | 'assembly') => void;
   isLargeFont: boolean;
   onToggleLargeFont: () => void;
 }
@@ -111,6 +112,23 @@ export const Navbar: React.FC<Props> = ({
         >
           <HelpCircle className="w-4 h-4 3xl:w-5 3xl:h-5" />
           <span className="hidden md:inline">Hazır Mısın?</span>
+        </button>
+
+        <button
+          onClick={() => {
+            soundService.playClick();
+            onSelectMode('assembly');
+          }}
+          className={`flex items-center gap-2 px-3.5 py-2 3xl:px-5 3xl:py-2.5 4k:px-6 4k:py-3 rounded-xl 3xl:rounded-2xl text-xs 3xl:text-sm 4k:text-base font-bold transition min-h-[44px] 3xl:min-h-[50px] 4k:min-h-[58px] ${
+            activeMode === 'assembly'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-[0_0_18px_rgba(16,185,129,0.45)]'
+              : 'text-emerald-400 hover:text-white hover:bg-emerald-950/40 border border-emerald-500/25'
+          }`}
+          title="3D PC Montaj Simülasyonu"
+        >
+          <Wrench className="w-4 h-4 3xl:w-5 3xl:h-5 text-emerald-400" />
+          <span className="hidden md:inline">Montaj Atölyesi</span>
+          <span className="inline md:hidden">Montaj</span>
         </button>
       </nav>
 

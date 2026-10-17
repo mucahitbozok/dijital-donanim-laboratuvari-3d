@@ -8,6 +8,7 @@ import { HardwareSelector } from './components/HardwareSelector';
 import { CompareModal } from './components/CompareModal';
 import { QuizModal } from './components/QuizModal';
 import { AdminModal } from './components/AdminModal';
+import { AssemblySimulator } from './components/AssemblySimulator';
 
 import { Box, FileText } from 'lucide-react';
 
@@ -19,7 +20,7 @@ export const App: React.FC = () => {
   const [selectedHardwareId, setSelectedHardwareId] = useState<string>('cpu');
 
   // 3. UI Navigation Modes
-  const [activeMode, setActiveMode] = useState<'inspect' | 'compare' | 'quiz' | 'admin'>('inspect');
+  const [activeMode, setActiveMode] = useState<'inspect' | 'compare' | 'quiz' | 'admin' | 'assembly'>('inspect');
 
   // 4. Large font toggle (smartboard readability)
   const [isLargeFont, setIsLargeFont] = useState(false);
@@ -31,6 +32,18 @@ export const App: React.FC = () => {
   const activeHardware: HardwareItem =
     dataset.hardware.find(h => h.id === selectedHardwareId) ||
     dataset.hardware[0];
+
+  // 3D PC Montaj Atölyesi Mode
+  if (activeMode === 'assembly') {
+    return (
+      <div className={`w-screen h-screen flex flex-col bg-lab-950 text-slate-100 overflow-hidden font-sans ${isLargeFont ? 'text-lg' : 'text-base'}`}>
+        <AssemblySimulator
+          onBackToLab={() => setActiveMode('inspect')}
+          isLargeFont={isLargeFont}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={`w-screen h-screen flex flex-col bg-lab-950 text-slate-100 overflow-hidden font-sans ${isLargeFont ? 'text-lg' : 'text-base'}`}>
