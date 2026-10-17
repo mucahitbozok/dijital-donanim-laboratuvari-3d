@@ -71,8 +71,8 @@ export const Navbar: React.FC<Props> = ({
               ÖĞRETMEN BOZOK
             </span>
           </div>
-          <h1 className="text-xs sm:text-base lg:text-lg 3xl:text-xl 4k:text-2xl font-black tracking-tight text-white flex items-center gap-1.5 sm:gap-2">
-            <span className="truncate max-w-[125px] xs:max-w-[180px] sm:max-w-none">DİJİTAL DONANIM</span>
+          <h1 className="text-xs sm:text-sm md:text-base lg:text-lg 3xl:text-xl 4k:text-2xl font-black tracking-tight text-white flex items-center gap-1.5 sm:gap-2">
+            <span className="truncate max-w-[160px] xs:max-w-[220px] md:max-w-none">DİJİTAL DONANIM LABORATUVARI</span>
             <span className="hidden sm:inline-block text-xs 3xl:text-sm font-bold text-zinc-400 px-2 py-0.5 rounded-full bg-lab-850 border border-zinc-700/70">
               3D
             </span>
