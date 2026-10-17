@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { HardwareDataset, HardwareItem } from './types/hardware';
 import { storageService } from './services/storage';
+import { soundService } from './services/sound';
 import { Navbar } from './components/Navbar';
 import { Hardware3DViewer } from './components/Hardware3DViewer';
 import { HardwareInfoPanel } from './components/HardwareInfoPanel';
@@ -27,6 +28,20 @@ export const App: React.FC = () => {
 
   // 5. Mobile Screen View Mode ('3d' or 'info' on mobile devices)
   const [mobileTab, setMobileTab] = useState<'3d' | 'info'>('3d');
+
+  // 6. Right Side Info Panel Visibility (Desktop / Smartboard & Fullscreen toggle)
+  const [isInfoPanelVisible, setIsInfoPanelVisible] = useState(true);
+
+  // Auto-hide right info panel when entering fullscreen so 3D model takes full screen
+  useEffect(() => {
+    const handleFsChange = () => {
+      if (document.fullscreenElement) {
+        setIsInfoPanelVisible(false);
+      }
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
 
   // Safe fallback if selected ID was deleted in admin
   const activeHardware: HardwareItem =
@@ -77,7 +92,10 @@ export const App: React.FC = () => {
             <span>3D Model</span>
           </button>
           <button
-            onClick={() => setMobileTab('info')}
+            onClick={() => {
+              setIsInfoPanelVisible(true);
+              setMobileTab('info');
+            }}
             className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
               mobileTab === 'info'
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm'
@@ -90,33 +108,46 @@ export const App: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Workspace (On Mobile: Clean Switcher; On Desktop & Smartboard: Full Side-by-Side) */}
+      {/* Main Workspace (On Mobile: Clean Switcher; On Desktop & Smartboard: Full Side-by-Side or Collapsible 3D) */}
       <main className="flex-1 flex flex-col lg:flex-row min-h-0 relative overflow-hidden">
         {/* 3D Hardware Explorer */}
-        <div className={`flex-1 h-full relative min-h-0 ${mobileTab === '3d' ? 'flex' : 'hidden lg:flex'}`}>
+        <div className={`flex-1 h-full relative min-h-0 ${mobileTab === '3d' ? 'flex' : (isInfoPanelVisible ? 'hidden lg:flex' : 'flex')}`}>
           <Hardware3DViewer
             hardware={activeHardware}
           />
-          {/* Mobile floating quick badge to switch to Info */}
-          <div className="lg:hidden absolute top-2.5 right-2.5 z-20 pointer-events-auto">
-            <button
-              onClick={() => setMobileTab('info')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-lab-900/90 backdrop-blur-md border border-zinc-700/80 text-xs font-bold text-zinc-200 shadow-xl active:scale-95"
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-400" />
-              <span>Bilgileri Aç</span>
-            </button>
-          </div>
+          {/* Floating button to open Info Panel ("Bilgileri Aç") */}
+          {(!isInfoPanelVisible || mobileTab === '3d') && (
+            <div className={`absolute top-3 right-3 sm:top-4 sm:right-4 z-20 pointer-events-auto ${!isInfoPanelVisible ? 'flex' : 'flex lg:hidden'}`}>
+              <button
+                onClick={() => {
+                  soundService.playClick();
+                  setIsInfoPanelVisible(true);
+                  setMobileTab('info');
+                }}
+                className="flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-lab-900/90 hover:bg-lab-800/95 backdrop-blur-xl border border-zinc-700/80 hover:border-amber-400/60 text-xs sm:text-sm font-bold text-zinc-100 shadow-2xl active:scale-95 transition-all group"
+                title="Donanım Bilgi Panelini Aç"
+              >
+                <FileText className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>Bilgileri Aç</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Dynamic Info Panel */}
-        <div className={`w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-full flex-shrink-0 z-10 ${mobileTab === 'info' ? 'flex' : 'hidden lg:flex'}`}>
-          <HardwareInfoPanel
-            hardware={activeHardware}
-            onOpenQuiz={() => setActiveMode('quiz')}
-            isLargeFont={isLargeFont}
-          />
-        </div>
+        {isInfoPanelVisible && (
+          <div className={`w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-full flex-shrink-0 z-10 ${mobileTab === 'info' ? 'flex' : 'hidden lg:flex'}`}>
+            <HardwareInfoPanel
+              hardware={activeHardware}
+              onOpenQuiz={() => setActiveMode('quiz')}
+              isLargeFont={isLargeFont}
+              onClose={() => {
+                setIsInfoPanelVisible(false);
+                setMobileTab('3d');
+              }}
+            />
+          </div>
+        )}
       </main>
 
       {/* Bottom Area: Hardware Selector Carousel & Category Tabs */}

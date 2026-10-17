@@ -11,19 +11,22 @@ import {
   Sparkles,
   MapPin,
   Cpu,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 
 interface Props {
   hardware: HardwareItem;
   onOpenQuiz: () => void;
   isLargeFont?: boolean;
+  onClose?: () => void;
 }
 
 export const HardwareInfoPanel: React.FC<Props> = ({
   hardware,
   onOpenQuiz,
-  isLargeFont = false
+  isLargeFont = false,
+  onClose
 }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
@@ -74,28 +77,43 @@ export const HardwareInfoPanel: React.FC<Props> = ({
           )}
         </div>
 
-        {/* Listen (Sesli Anlatım) Button */}
-        <button
-          onClick={handleToggleSpeech}
-          className={`flex items-center gap-2 px-4 py-3 rounded-2xl font-bold transition shadow-lg min-h-[48px] ${
-            isSpeaking
-              ? 'bg-amber-400 text-zinc-950 ring-4 ring-amber-400/30 animate-pulse font-black'
-              : 'bg-lab-850 hover:bg-lab-800 text-zinc-200 border border-zinc-700/80 hover:border-zinc-500 active:scale-95'
-          }`}
-          title="Donanım açıklamasını sesli dinle"
-        >
-          {isSpeaking ? (
-            <>
-              <VolumeX className="w-5 h-5 text-zinc-950" />
-              <span className="text-xs tracking-wider">DURDUR</span>
-            </>
-          ) : (
-            <>
-              <Volume2 className={`w-5 h-5 ${theme.textColor}`} />
-              <span className="text-xs tracking-wider font-semibold">DİNLE</span>
-            </>
+        {/* Actions: Listen & Close Buttons */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button
+            onClick={handleToggleSpeech}
+            className={`flex items-center gap-2 px-4 py-3 rounded-2xl font-bold transition shadow-lg min-h-[48px] ${
+              isSpeaking
+                ? 'bg-amber-400 text-zinc-950 ring-4 ring-amber-400/30 animate-pulse font-black'
+                : 'bg-lab-850 hover:bg-lab-800 text-zinc-200 border border-zinc-700/80 hover:border-zinc-500 active:scale-95'
+            }`}
+            title="Donanım açıklamasını sesli dinle"
+          >
+            {isSpeaking ? (
+              <>
+                <VolumeX className="w-5 h-5 text-zinc-950" />
+                <span className="text-xs tracking-wider">DURDUR</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className={`w-5 h-5 ${theme.textColor}`} />
+                <span className="text-xs tracking-wider font-semibold">DİNLE</span>
+              </>
+            )}
+          </button>
+
+          {onClose && (
+            <button
+              onClick={() => {
+                soundService.playClick();
+                onClose();
+              }}
+              className="p-3 rounded-2xl bg-lab-850 hover:bg-zinc-800 text-zinc-400 hover:text-white border border-zinc-700/80 hover:border-zinc-500 active:scale-95 transition flex items-center justify-center min-h-[48px] min-w-[48px]"
+              title="Bilgi Panelini Gizle (Tam Ekran 3D Görünüm)"
+            >
+              <X className="w-5 h-5" />
+            </button>
           )}
-        </button>
+        </div>
       </div>
 
       {/* 1 Sentence Educational Summary Highlight Box */}

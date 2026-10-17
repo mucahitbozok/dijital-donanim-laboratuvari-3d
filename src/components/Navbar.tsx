@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { soundService } from '../services/sound';
 import {
   Cpu,
@@ -28,6 +28,14 @@ export const Navbar: React.FC<Props> = ({
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isSoundOn, setIsSoundOn] = useState(true);
+
+  useEffect(() => {
+    const handleFs = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFs);
+    return () => document.removeEventListener('fullscreenchange', handleFs);
+  }, []);
 
   const toggleFullscreen = () => {
     soundService.playClick();
