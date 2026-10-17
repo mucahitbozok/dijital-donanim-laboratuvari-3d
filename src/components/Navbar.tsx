@@ -124,11 +124,11 @@ export const Navbar: React.FC<Props> = ({
               ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-black shadow-[0_0_18px_rgba(16,185,129,0.45)]'
               : 'text-emerald-400 hover:text-white hover:bg-emerald-950/40 border border-emerald-500/25'
           }`}
-          title="3D PC Montaj Simülasyonu"
+          title="Anakartı Tamamla! 3D Simülasyonu"
         >
           <Wrench className="w-4 h-4 3xl:w-5 3xl:h-5 text-emerald-400" />
-          <span className="hidden md:inline">Montaj Atölyesi</span>
-          <span className="inline md:hidden">Montaj</span>
+          <span className="hidden md:inline">Anakartı Tamamla!</span>
+          <span className="inline md:hidden">Tamamla</span>
         </button>
       </nav>
 

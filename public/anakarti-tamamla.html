@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anakartı Tamamla!</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dff3ee;--ink:#12332c;--card:#ffffff;--accent:#f5a623;--ok:#1f9d55;--bad:#d64545;--line:#b7ddd2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f2a2a;--ink:#e6f6f1;--card:#173c3b;--line:#2c5a58}}
+:root[data-theme="dark"]{--bg:#0f2a2a;--ink:#e6f6f1;--card:#173c3b;--line:#2c5a58}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Baloo 2','Trebuchet MS',sans-serif;overflow:hidden;touch-action:none;user-select:none}
+#stage{position:absolute;inset:0}
+canvas{display:block;width:100%;height:100%}
+header{position:absolute;left:12px;right:12px;top:calc(8px + env(safe-area-inset-top,0px));display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:none}
+h1{font-size:clamp(1.2rem,4vw,1.8rem);margin:0;line-height:1.1;flex:1 1 200px}
+.pill,button{pointer-events:auto;font:inherit;font-weight:700;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 14px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--accent);color:#1d1400;border-color:var(--accent)}
+#help{position:absolute;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));text-align:center;font-size:.95rem;opacity:.85;pointer-events:none}
+#info{position:absolute;right:12px;top:calc(70px + env(safe-area-inset-top,0px));width:min(320px,calc(100% - 24px));background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px 16px 14px;display:none;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#info.show{display:block}
+#info h2{margin:0 24px 4px 0;font-size:1.3rem}
+#info p{margin:0;font-size:1.05rem;line-height:1.35}
+#close{position:absolute;right:8px;top:6px;padding:0 10px;font-size:1.2rem}
+#toast{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%) scale(.9);max-width:min(440px,90%);padding:14px 22px;border-radius:20px;color:#fff;font-weight:700;font-size:1.25rem;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+#toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#toast.ok{background:var(--ok)}#toast.bad{background:var(--bad)}#toast.neutral{background:#3a6ea5}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<header>
+<h1>Anakartı Tamamla!</h1>
+<span class="pill" id="count">Takılan: 0 / 8</span>
+<button id="lbl" aria-pressed="false">Etiketleri göster</button>
+<button id="reset">Baştan başla</button>
+<button id="back" onclick="if(window.parent)window.parent.postMessage('back-to-lab','*')" style="margin-left:auto;border-color:#1f9d55;color:#1f9d55">← Laboratuvara Dön</button>
+</header>
+<div id="info" role="status"><button id="close" aria-label="Kapat">×</button><h2 id="it"></h2><p id="ib"></p></div>
+<div id="toast" role="alert"></div>
+<div id="help">Parçayı sürükleyip doğru yuvaya bırak. Soğutucuyu işlemciden sonra tak. Bilgi için parçaya tıkla. Boş yere sürükleyerek anakartı döndür.</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const stage=$('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+stage.appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(42,1,.1,100);
+// Stüdyo ışığı: yumuşak ışık kutularından oluşan ortam haritası
+const pm=new THREE.PMREMGenerator(renderer),es=new THREE.Scene();es.background=new THREE.Color(0x1d2a30);
+[[0,9,0,14,.2,14,3.2],[-9,4,0,.2,7,10,2],[9,3,5,.2,5,7,1.6],[0,4,-10,12,6,.2,1.2]].forEach(a=>{const m=new THREE.Mesh(new THREE.BoxGeometry(a[3],a[4],a[5]),new THREE.MeshBasicMaterial({color:new THREE.Color(a[6],a[6],a[6])}));m.position.set(a[0],a[1],a[2]);es.add(m)});
+scene.environment=pm.fromScene(es,.04).texture;
+scene.add(new THREE.HemisphereLight(0xffffff,0x445566,.25));
+const sun=new THREE.DirectionalLight(0xfff4e5,1.1);sun.position.set(5,12,7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10,near:1,far:30});sun.shadow.bias=-.0004;scene.add(sun);
+const gnd=new THREE.Mesh(new THREE.PlaneGeometry(60,60).rotateX(-Math.PI/2),new THREE.ShadowMaterial({opacity:.28}));gnd.position.y=-.06;gnd.receiveShadow=true;scene.add(gnd);
+
+const sel=[],slots=[],parts=[],fans=[],labels=[];
+function tex(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t}
+const M=(c,m=.1,r=.5,o={})=>new THREE.MeshStandardMaterial(Object.assign({color:c,metalness:m,roughness:r},o));
+const GOLD=M(0xd9a93a,1,.28),ALU=M(0xbcc1c8,.95,.32),BLK=M(0x111216,.3,.35),PLA=M(0x1b1d22,.1,.5),WHT=M(0xeeeeee,0,.5);
+const lab=(t,bg,fg,s=26,w=256,h=128,m=.4,r=.4)=>M(0xffffff,m,r,{map:tex(w,h,g=>{g.fillStyle=bg;g.fillRect(0,0,w,h);g.fillStyle=fg;g.font='bold '+s+'px Arial';g.textAlign='center';g.textBaseline='middle';t.split('|').forEach((l,i,a)=>g.fillText(l,w/2,h/2+(i-(a.length-1)/2)*(s+6)))})});
+function bx(p,w,h,d,m,x,y,z){if(typeof m=='number')m=M(m);const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);p.add(o);return o}
+function bxF(p,w,h,d,base,face,i,x,y,z){const ms=Array(6).fill(base);ms[i]=face;const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),ms);o.position.set(x,y,z);p.add(o);return o}
+function cy(p,r,h,m,x,y,z,rz){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,20),m);o.position.set(x,y,z);if(rz)o.rotation.z=Math.PI/2;p.add(o);return o}
+function reg(g){g.traverse(o=>{if(o.isMesh){o.userData.owner=g;o.castShadow=o.receiveShadow=true;sel.push(o)}});scene.add(g)}
+function label(g,text,y){const c=document.createElement('canvas');c.width=300;c.height=70;const x=c.getContext('2d');x.fillStyle='rgba(20,30,28,.88)';x.fillRect(0,0,300,70);x.fillStyle='#fff';x.font='bold 30px sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(text,150,37);
+const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false}));s.scale.set(2.4,.56,1);s.position.y=y;s.visible=false;s.renderOrder=9;g.add(s);labels.push(s)}
+function fin(p,w,h,d,n,x,y,z,alongX){for(let i=0;i<n;i++){const o=(i/(n-1)-.5)*(alongX?w:d);bx(p,alongX?w/n*.5:w,h,alongX?d:d/n*.5,ALU,x+(alongX?o:0),y,z+(alongX?0:o))}}
+function fan(p,r,n,x,y,z,col,ax){const g=new THREE.Group(),rot=new THREE.Group();rot.add(new THREE.Mesh(new THREE.CylinderGeometry(r*.27,r*.27,.07,20),BLK));
+for(let i=0;i<n;i++){const pv=new THREE.Group();pv.rotation.y=i*6.283/n;const b=new THREE.Mesh(new THREE.BoxGeometry(r*.72,.015,r*.3),M(col,.1,.4));b.position.x=r*.55;b.rotation.x=.5;pv.add(b);rot.add(pv)}
+g.add(rot,new THREE.Mesh(new THREE.TorusGeometry(r*1.03,.04,8,36).rotateX(Math.PI/2),PLA));g.position.set(x,y,z);if(ax)g.rotation.x=Math.PI/2;p.add(g);fans.push(rot)}
+
+// ANAKART (PCB dokusu: bakır yollar, delikler, serigrafi yazılar)
+const pcbT=tex(1024,1024,(g,w,h)=>{g.fillStyle='#146a40';g.fillRect(0,0,w,h);for(let i=0;i<14000;i++){g.fillStyle='rgba('+(i%2?'255,255,255':'0,0,0')+',.035)';g.fillRect(Math.random()*w,Math.random()*h,2,2)}
+g.lineCap='round';for(let k=0;k<110;k++){let x=Math.random()*w,y=Math.random()*h;g.strokeStyle='rgba(140,235,180,.32)';g.lineWidth=2+Math.random()*3;g.beginPath();g.moveTo(x,y);for(let j=0;j<6;j++){if(j%2)x+=(Math.random()-.5)*260;else y+=(Math.random()-.5)*260;g.lineTo(x,y)}g.stroke();g.fillStyle='#d9b45a';g.beginPath();g.arc(x,y,5,0,7);g.fill()}
+g.fillStyle='rgba(255,255,255,.75)';g.font='bold 44px Arial';g.fillText('ANAKART',70,980);g.font='26px Arial';g.fillText('MAINBOARD v1.0',640,990);g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=4;g.strokeRect(40,40,w-80,h-80)});
+const board=new THREE.Group();
+bxF(board,10,.2,8,M(0x0c4a2b,.1,.6),new THREE.MeshPhysicalMaterial({map:pcbT,roughness:.4,metalness:.05,clearcoat:.5,clearcoatRoughness:.35}),2,0,0,0);
+for(let i=0;i<14;i++){const x=-3.4+i*.2;cy(board,.1,.3,M(i%3?0x15161b:0x1b3a73,.5,.35),x,.25,-3.5);cy(board,.085,.02,ALU,x,.41,-3.5)}
+for(let i=0;i<7;i++){bx(board,.3,.24,.3,M(0x2d2f36,.7,.4),-.3+i*.45,.22,-3.2);bx(board,.3,.02,.3,GOLD,-.3+i*.45,.35,-3.2)}
+for(let i=0;i<5;i++)cy(board,.12,.32,M(0x15161b,.5,.35),-3.6,.26,-3+i*.55);
+board.userData={title:'Anakart',text:'Bütün donanım parçalarının takıldığı ana karttır. Parçaların birbiriyle haberleşmesini sağlar.'};
+reg(board);
+
+// SABİT PARÇALAR
+function fixed(title,text,build,x,z,ly){const g=new THREE.Group();build(g);g.position.set(x,.1,z);g.userData={title,text};reg(g);label(g,title,ly)}
+fixed('Yonga seti','Parçaların birbiriyle konuşmasını sağlayan trafik polisi gibidir.',g=>{bx(g,1.3,.1,1.3,ALU,0,.05,0);fin(g,1.2,.32,1.2,9,0,.26,0,true);bx(g,.5,.02,.5,lab('YONGA|SETİ','#222','#fff',18,128,128,.3,.5),0,.43,0)},3.5,2.2,1);
+fixed('Giriş-çıkış portları','Klavye, fare, USB, kulaklık gibi cihazları buraya bağlarız.',g=>{bx(g,.9,1,2.8,M(0x8d949c,.9,.4),0,.5,0);for(let i=0;i<4;i++){bx(g,.12,.14,.5,0x1f6fff,.46,.25+(i%2)*.4,-.9+(i>>1)*.6+(i%2?0:.0)*0);}bx(g,.14,.5,.55,0x222831,.46,.75,.3);bx(g,.14,.25,.5,M(0xb0b6bd,.9,.3),.46,.75,-.8);[0x6adf6a,0xff7fb0,0x4ea3ff].forEach((c,i)=>cy(g,.07,.1,M(c,.2,.4),.46,.25+i*.2,1.1,true))},-4.5,-1.4,1.7);
+fixed('Güç soketi','Güç kaynağından gelen elektrik anakarta buradan girer.',g=>{bx(g,.5,.42,1.8,WHT,0,.21,0);for(let i=0;i<12;i++)for(let j=0;j<2;j++)bx(g,.08,.02,.08,0x15151a,-.1+j*.2,.43,-.75+i*.136);bx(g,.1,.3,.5,0xdcd9cf,.28,.2,0)},4.5,-2,.9);
+fixed('SATA portları','Sabit disk ve CD sürücüsü kabloları buraya takılır.',g=>{for(let i=0;i<4;i++){bx(g,.45,.28,.28,0x15151a,0,.14,-.5+i*.36);bx(g,.3,.1,.1,0x333,-.05,.3,-.5+i*.36)}},4.4,.9,.9);
+
+// YUVALAR  [tür, ad, bilgi, x, z, genişlik, derinlik, takma yüksekliği]
+const LGA=tex(256,256,(g,w,h)=>{g.fillStyle='#17181c';g.fillRect(0,0,w,h);g.fillStyle='#d9a93a';for(let x=0;x<40;x++)for(let y=0;y<40;y++)if(!(x>14&&x<26&&y>14&&y<26))g.fillRect(x*6.3+1,y*6.3+1,3,3)});
+const SL=[
+['cpu','İşlemci soketi','Kare şeklindeki bu yuva sadece işlemci içindir.',-1.2,-1.2,1.9,1.9,.16],
+['cool','Soğutucu yeri','İşlemcinin üstüne soğutucu ve fan takılır. Önce işlemci gerekir.',-1.2,-1.2,1.5,1.5,.31],
+['ram','Bellek yuvası','İnce ve uzun yuva, bellek (RAM) çubukları içindir.',2.4,-1.5,.28,3,.16],
+['ram','Bellek yuvası','İnce ve uzun yuva, bellek (RAM) çubukları içindir.',3.0,-1.5,.28,3,.16],
+['gpu','Ekran kartı yuvası','Anakartın en uzun yuvasıdır. Ekran kartı buraya takılır.',-.8,2.5,4,.3,.16],
+['ssd','SSD yuvası','Küçük ve yatay yuva, SSD diskler içindir.',-3.2,1,1.8,.45,.16],
+['wifi','Wi-Fi kartı yuvası','Kısa PCIe yuvası, Wi-Fi gibi küçük kartlar içindir.',.9,.5,1.1,.28,.16],
+['bat','Pil yuvası','Yuvarlak pil bu metal yuvaya oturur.',-3.6,3,.8,.8,.16]];
+SL.forEach((s,i)=>{const [t,nm,tx,x,z,w,d,by]=s,g=new THREE.Group();let body=M(i==3?0x30333b:0x1c1d22,.2,.5);
+if(t=='cpu'){bx(g,w+.25,.05,d+.25,ALU,0,0,0);bxF(g,w,.07,d,body,M(0xffffff,.8,.35,{map:LGA}),2,0,.04,0);bx(g,.05,.1,d+.3,ALU,-w/2-.1,.06,0)}
+else if(t=='bat'){body=M(0xaab0b8,.9,.35);bx(g,w,.05,d,body,0,.03,0);[[-1,0],[1,0]].forEach(a=>bx(g,.06,.12,.5,body,a[0]*w/2,.08,0))}
+else if(t!='cool'){bx(g,w,.08,d,body,0,.04,0);const h=w>d;bx(g,h?w*.92:.08,.02,h?.08:d*.95,GOLD,0,.09,0);
+ if(t=='ram'){[-1,1].forEach(k=>bx(g,.14,.15,.2,WHT,0,.1,k*(d/2+.08)))}else if(t=='gpu'||t=='wifi')bx(g,.14,.14,.3,WHT,w/2+.04,.09,0);else bx(g,.1,.12,.1,GOLD,w/2+.12,.06,0)}
+g.position.set(x,.13,z);g.userData={title:nm,text:tx,type:t,x,z,by,occ:null,mat:body,name:nm};reg(g);slots.push(g);label(g,nm,t=='cool'?1.4:.9)});
+
+// TAKILABİLİR PARÇALAR
+const HOLD=.05;
+function mkPart(type,title,text,hx,build){const g=new THREE.Group();build(g);g.position.set(hx,HOLD,5.8);g.userData={title,text,type,home:new THREE.Vector3(hx,HOLD,5.8),target:new THREE.Vector3(hx,HOLD,5.8),slot:null};reg(g);parts.push(g)}
+mkPart('cpu','İşlemci (CPU)','Bilgisayarın beynidir. Bütün işlemleri yapar ve komutları yürütür.',-5.2,g=>{bx(g,1.5,.06,1.5,M(0x1d7a4a,.2,.5),0,.03,0);bxF(g,1,.07,1,ALU,lab('İŞLEMCİ|3.8 GHz','#c9ced4','#2a2d33',24,256,256,.9,.3),2,0,.095,0);[[-.62,-.62],[.62,.62],[-.62,.62],[.62,-.62]].forEach(a=>bx(g,.1,.04,.1,0x33343a,a[0],.08,a[1]));const t=bx(g,.12,.03,.12,GOLD,-.65,.075,-.65);t.rotation.y=.78});
+mkPart('cool','İşlemci soğutucusu (fan)','İşlemci ısınır. Soğutucu ve fan ısıyı dışarı atar. İşlemcinin üstüne takılır.',-3.6,g=>{bx(g,1.4,.08,1.4,ALU,0,.04,0);fin(g,1.4,.5,1.4,16,0,.33,0,true);bx(g,1.4,.04,1.4,PLA,0,.6,0);fan(g,.6,7,0,.65,0,0x3b82f6)});
+const ramB=g=>{bx(g,.1,.9,2.6,M(0x0f3d2a,.1,.5),0,.5,0);for(let i=0;i<4;i++)[1,-1].forEach(k=>bx(g,.05,.5,.45,BLK,.07*k,.52,-.9+i*.6));bxF(g,.04,.62,2.3,ALU,lab('RAM|DDR5','#2a2d33','#e6e9ee',30,256,128,.9,.3),0,.075,.58,0);bx(g,.04,.62,2.3,ALU,-.075,.58,0);bx(g,.12,.04,2.2,M(0x00e5ff,0,.3,{emissive:0x00c8ff,emissiveIntensity:1.6}),0,.93,0);bx(g,.12,.1,2.6,GOLD,0,.05,0);bx(g,.14,.1,.06,0x111,0,.05,.2)};
+mkPart('ram','Bellek (RAM)','Açık programların bilgilerini geçici saklar. Bilgisayar kapanınca silinir.',-2.4,ramB);
+mkPart('ram','Bellek (RAM)','Açık programların bilgilerini geçici saklar. Bilgisayar kapanınca silinir.',-1.8,ramB);
+mkPart('wifi','Wi-Fi kartı','Bilgisayarın kablosuz internete bağlanmasını sağlar.',-.6,g=>{bx(g,1,.6,.05,M(0x1a6b52,.1,.5),0,.38,0);bx(g,.6,.1,.05,GOLD,-.15,.05,0);bx(g,.35,.2,.08,ALU,.0,.5,0);bx(g,.2,.12,.08,BLK,.2,.28,0);[.2,.38].forEach((x,i)=>{cy(g,.03,.1,GOLD,x+.05,.72,.0);const c=cy(g,.012,.7,BLK,x+.05+i*.1,1.1,0);c.rotation.z=i?-.15:.15})});
+mkPart('bat','Pil (CMOS)','Bilgisayar kapalıyken saat ve tarih ayarını korur.',.8,g=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.1,32),[M(0xcfd5db,1,.25),lab('CR2032|3V','#d8dde2','#333',30,128,128,.9,.3),M(0xcfd5db,1,.25)]);o.position.y=.05;g.add(o)});
+mkPart('ssd','Depolama (SSD)','Dosyalarımızı kalıcı saklar. Bilgisayar kapansa da silinmez.',2.3,g=>{bx(g,1.6,.04,.4,M(0x1a6b52,.1,.5),0,.03,0);[-.15,.3,.6].forEach((x,i)=>bxF(g,i?.3:.4,.05,.3,BLK,lab(i?'NAND':'CTRL','#15161a','#9aa','20',64,64,.3,.3),2,x,.07,0));bx(g,.14,.045,.4,GOLD,-.75,.03,0);cy(g,.06,.06,ALU,.76,.08,0)});
+mkPart('gpu','Ekran kartı (GPU)','Oyunların ve videoların görüntüsünü çizip ekrana gönderir.',4.7,g=>{bx(g,3.4,.9,.28,PLA,0,.5,0);bx(g,3.4,.9,.03,M(0x777d86,.9,.35),0,.5,-.16);bx(g,3.2,.03,.05,M(0xff2fb4,0,.3,{emissive:0xff1fa0,emissiveIntensity:1.6}),0,.96,.1);bx(g,3,.1,.1,GOLD,0,.05,0);bx(g,.05,1,.3,ALU,-1.75,.55,0);[0,1,2].forEach(i=>bx(g,.06,.14,.1,BLK,-1.75,.3+i*.2,.0));[-.85,.85].forEach(x=>fan(g,.38,9,x,.5,.16,0x666c78,true))});
+const tray=new THREE.Mesh(new THREE.BoxGeometry(13,.1,3.6),M(0xdccfb0,0,.8));tray.position.set(0,0,5.8);tray.receiveShadow=true;scene.add(tray);
+
+// KAMERA
+let th=0,ph=.85,R=17;const tgt=new THREE.Vector3(0,0,1.8);
+function cam(){camera.position.set(tgt.x+R*Math.sin(ph)*Math.sin(th),tgt.y+R*Math.cos(ph),tgt.z+R*Math.sin(ph)*Math.cos(th));camera.lookAt(tgt)}
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;R=w/h<.8?27:17;camera.updateProjectionMatrix();cam()}
+addEventListener('resize',resize);resize();
+
+function info(o){$('it').textContent=o.title;$('ib').textContent=o.text;$('info').classList.add('show')}
+$('close').onclick=()=>$('info').classList.remove('show');
+let tt;function toast(t,k){const e=$('toast');e.textContent=t;e.className='show '+k;clearTimeout(tt);tt=setTimeout(()=>e.className='',3800)}
+function count(){const n=slots.filter(s=>s.userData.occ).length;$('count').textContent='Takılan: '+n+' / '+slots.length;return n}
+const coolSlot=slots[1],cpuSlot=slots[0];
+
+const ray=new THREE.Raycaster(),m2=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),-.9);
+let drag=null,orbit=false,moved=false,sx=0,sy=0,lx=0,ly=0,picked=null,off=new THREE.Vector3(),hit=new THREE.Vector3();
+function cast(e){m2.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1);ray.setFromCamera(m2,camera)}
+function glow(on){slots.forEach(s=>s.userData.mat.emissive.setHex(on&&!s.userData.occ&&s.userData.type!='cool'?0x554400:0))}
+renderer.domElement.addEventListener('pointerdown',e=>{renderer.domElement.setPointerCapture(e.pointerId);cast(e);const h=ray.intersectObjects(sel)[0];picked=h?h.object.userData.owner:null;moved=false;sx=lx=e.clientX;sy=ly=e.clientY;
+if(picked&&parts.includes(picked)){if(picked.userData.type=='cpu'&&picked.userData.slot&&coolSlot.userData.occ){toast('Önce soğutucuyu çıkar, sonra işlemciyi çıkarabilirsin.','neutral');picked=null;orbit=true;return}
+drag=picked;ray.ray.intersectPlane(plane,hit);off.set(hit.x-drag.position.x,0,hit.z-drag.position.z)}else orbit=true});
+renderer.domElement.addEventListener('pointermove',e=>{if(!drag&&!orbit)return;if(Math.hypot(e.clientX-sx,e.clientY-sy)>6)moved=true;
+if(drag&&moved){if(drag.userData.slot){drag.userData.slot.userData.occ=null;drag.userData.slot=null;count()}glow(true);cast(e);if(ray.ray.intersectPlane(plane,hit)){drag.position.set(hit.x-off.x,.9,hit.z-off.z);drag.userData.target.copy(drag.position)}}
+else if(orbit&&moved){th-=(e.clientX-lx)*.006;ph=Math.min(1.3,Math.max(.25,ph-(e.clientY-ly)*.005));cam()}lx=e.clientX;ly=e.clientY});
+addEventListener('wheel',e=>{R=Math.min(32,Math.max(8,R+e.deltaY*.01));cam()},{passive:true});
+function up(){glow(false);if(!moved){if(picked)info(picked.userData)}else if(drag){const d=drag,u=d.userData;let best=null,bd=1.5;slots.forEach(s=>{const v=s.userData;if(v.occ||(v.type=='cool'&&!cpuSlot.userData.occ))return;const k=Math.hypot(v.x-d.position.x,v.z-d.position.z);if(k<bd){bd=k;best=s}});
+if(best&&best.userData.type===u.type){best.userData.occ=d;u.slot=best;u.target.set(best.userData.x,best.userData.by,best.userData.z);const n=count();toast(n==slots.length?'Harika! Anakartı eksiksiz tamamladın!':'Doğru! '+u.title+' doğru yuvaya takıldı.','ok')}
+else if(best){u.target.copy(u.home);toast(u.type=='cool'&&best.userData.type=='cpu'?'Yanlış sıra! Soğutucu işlemcinin üstüne takılır. Önce işlemciyi tak.':'Yanlış! Burası '+best.userData.name+'. '+u.title+' buraya takılmaz. Şekle ve boyuta bak!','bad')}
+else{u.target.copy(u.home);toast('Parçayı bir yuvanın üstüne bırakmalısın.','neutral')}}
+drag=null;orbit=false}
+renderer.domElement.addEventListener('pointerup',up);renderer.domElement.addEventListener('pointercancel',up);
+
+$('lbl').onclick=e=>{const on=e.target.getAttribute('aria-pressed')!='true';e.target.setAttribute('aria-pressed',on);e.target.textContent=on?'Etiketleri gizle':'Etiketleri göster';labels.forEach(l=>l.visible=on)};
+$('reset').onclick=()=>{slots.forEach(s=>s.userData.occ=null);parts.forEach(p=>{p.userData.slot=null;p.userData.target.copy(p.userData.home)});count();$('info').classList.remove('show')};
+
+(function loop(){requestAnimationFrame(loop);parts.forEach(p=>{if(p!==drag||!moved)p.position.lerp(p.userData.target,.2)});fans.forEach(f=>f.rotation.y+=.07);renderer.render(scene,camera)})();
+</script>
+</body>
+</html>
