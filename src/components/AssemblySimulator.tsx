@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import confetti from 'canvas-confetti';
 import { soundService } from '../services/sound';
 import {
@@ -13,7 +14,9 @@ import {
   AlertCircle,
   Check,
   ChevronRight,
-  Info
+  Info,
+  Layers,
+  Camera
 } from 'lucide-react';
 
 interface Props {
@@ -30,11 +33,15 @@ interface AssemblyPart {
   icon: string;
   color: string;
   educationalTip: string;
+  modelUrl: string;
   slotPos: [number, number, number];
+  targetScale: number;
+  rotation: [number, number, number];
   prerequisiteId?: string;
   prerequisiteName?: string;
 }
 
+// 6 Core Hardware Components for PC Assembly
 const ASSEMBLY_PARTS: AssemblyPart[] = [
   {
     id: 'cpu',
@@ -45,18 +52,24 @@ const ASSEMBLY_PARTS: AssemblyPart[] = [
     icon: '🧠',
     color: '#6366f1',
     educationalTip: 'İşlemciyi soketteki altın üçgen çentiğine göre dikkatlice yerleştiriyoruz. Bilgisayarın tüm hesaplamalarını yapar!',
-    slotPos: [-0.65, 0.12, -0.55]
+    modelUrl: '/models/cpu.glb',
+    slotPos: [-0.34, 0.49, -1.02],
+    targetScale: 0.24,
+    rotation: [-Math.PI / 2, 0, 0]
   },
   {
     id: 'cooler',
     order: 2,
     name: 'İşlemci Soğutucu Fanı',
     role: 'Termal Soğutma',
-    slotName: 'CPU Üstü Fan Montajı',
+    slotName: 'CPU Üstü Fan Bloğu',
     icon: '❄️',
     color: '#06b6d4',
     educationalTip: 'İşlemci çalışırken çok ısınır. Termal macun ve alüminyum fan bloğu sayesinde işlemci serin kalarak hızlı çalışır!',
-    slotPos: [-0.65, 0.46, -0.55],
+    modelUrl: '', // High-fidelity procedural cooler with spinning fan
+    slotPos: [-0.34, 0.52, -1.02],
+    targetScale: 1.0,
+    rotation: [0, 0, 0],
     prerequisiteId: 'cpu',
     prerequisiteName: 'İşlemci (CPU)'
   },
@@ -65,22 +78,28 @@ const ASSEMBLY_PARTS: AssemblyPart[] = [
     order: 3,
     name: 'RAM Bellek (DDR5)',
     role: 'Geçici Çalışma Hafızası',
-    slotName: 'DDR RAM Yuvası',
+    slotName: 'DDR DIMM Yuvası',
     icon: '⚡',
     color: '#a855f7',
     educationalTip: 'RAM çentiğini yuva ile hizalayıp iki ucundan bastırarak mandalların tık diye kilitlenmesini sağlıyoruz!',
-    slotPos: [0.65, 0.22, -0.45]
+    modelUrl: '/models/ram.glb',
+    slotPos: [0.72, 0.58, -1.02],
+    targetScale: 0.22,
+    rotation: [0, Math.PI / 2, 0]
   },
   {
     id: 'gpu',
     order: 4,
     name: 'Ekran Kartı (GPU)',
     role: 'Görüntü ve 3D Grafik',
-    slotName: 'PCIe x16 Geniş Yuva',
+    slotName: 'PCI Express x16 Yuvası',
     icon: '🎮',
     color: '#f59e0b',
     educationalTip: 'Ekran kartını anakartın en uzun yuvası olan PCI Express (PCIe) yuvasına takıyoruz. Monitöre görüntü ve oyunları verir!',
-    slotPos: [0.0, 0.26, 0.45]
+    modelUrl: '/models/graphics-card.glb',
+    slotPos: [-0.16, 0.58, 0.12],
+    targetScale: 0.22,
+    rotation: [0, 0, 0]
   },
   {
     id: 'ssd',
@@ -91,7 +110,10 @@ const ASSEMBLY_PARTS: AssemblyPart[] = [
     icon: '💾',
     color: '#10b981',
     educationalTip: 'M.2 SSD\'yi 30 derece açıyla yuvasına takıp vidayla sabitliyoruz. Windows ve tüm oyunlar burada saklanır!',
-    slotPos: [0.15, 0.12, -0.05]
+    modelUrl: '/models/storage.glb',
+    slotPos: [0.08, 0.48, -0.32],
+    targetScale: 0.22,
+    rotation: [0, Math.PI / 2, 0]
   },
   {
     id: 'cable',
@@ -102,7 +124,10 @@ const ASSEMBLY_PARTS: AssemblyPart[] = [
     icon: '🔌',
     color: '#ec4899',
     educationalTip: 'Güç kaynağından (PSU) gelen kalın 24-pin ana güç kablosunu takıyoruz. Bilgisayarın kalbine elektrik enerjisi verir!',
-    slotPos: [1.65, 0.26, -0.65]
+    modelUrl: '', // High-fidelity braided harness cable
+    slotPos: [1.48, 0.54, -0.92],
+    targetScale: 1.0,
+    rotation: [0, 0, 0]
   }
 ];
 
@@ -128,16 +153,21 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
   const controlsRef = useRef<OrbitControls | null>(null);
   const animFrameRef = useRef<number>(0);
 
-  // 3D Object References
-  const workbenchGroupRef = useRef<THREE.Group | null>(null);
+  // 3D Object Collections
+  const loadedGltfCacheRef = useRef<Map<string, THREE.Group>>(new Map());
   const installedMeshesRef = useRef<Map<string, THREE.Group>>(new Map());
   const animatingMeshesRef = useRef<Map<string, { group: THREE.Group; startY: number; targetY: number; progress: number }>>(new Map());
-  const fanBladeGroupRef = useRef<THREE.Group | null>(null);
+  const coolerFanRef = useRef<THREE.Group | null>(null);
   const gpuFansRef = useRef<THREE.Group[]>([]);
   const rgbMeshesRef = useRef<THREE.Mesh[]>([]);
-  const monitorScreenMeshRef = useRef<THREE.Mesh | null>(null);
 
-  // State
+  // Monitor Canvas Texture References
+  const monitorCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const monitorTextureRef = useRef<THREE.CanvasTexture | null>(null);
+
+  // States
+  const [isLoadingModels, setIsLoadingModels] = useState<boolean>(true);
+  const [loadingProgress, setLoadingProgress] = useState<number>(10);
   const [installedParts, setInstalledParts] = useState<Set<string>>(new Set());
   const [selectedPartId, setSelectedPartId] = useState<string>('cpu');
   const [feedbackToast, setFeedbackToast] = useState<{ message: string; type: 'success' | 'warn' | 'info' } | null>({
@@ -158,13 +188,11 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
     return is4K ? Math.min(dpr, 1.25) : Math.min(dpr, 2);
   };
 
-  // Helper: Material factories
-  const metallicMat = (color: number, roughness = 0.25, metalness = 0.85) =>
+  // Helper Material Builders
+  const metallicMat = (color: number, roughness = 0.2, metalness = 0.9) =>
     new THREE.MeshStandardMaterial({ color, roughness, metalness });
   const matteMat = (color: number, roughness = 0.7, metalness = 0.15) =>
     new THREE.MeshStandardMaterial({ color, roughness, metalness });
-  const goldMat = () =>
-    new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.2, metalness: 0.95 });
   const glowMat = (color: number, intensity = 0.8) =>
     new THREE.MeshStandardMaterial({
       color,
@@ -174,427 +202,352 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       metalness: 0.5
     });
 
-  // Construct Realistic Motherboard on Test Bench
-  const buildMotherboardBase = (): THREE.Group => {
-    const group = new THREE.Group();
-    group.name = 'motherboard_base';
+  // Dynamic Monitor Canvas Renderer (Simulates Real BIOS & OS Boot)
+  const updateMonitorDisplay = useCallback((lines: string[], poweredOn: boolean) => {
+    if (!monitorCanvasRef.current || !monitorTextureRef.current) return;
+    const ctx = monitorCanvasRef.current.getContext('2d');
+    if (!ctx) return;
 
-    // 1. Dark ATX PCB Board
-    const pcbGeo = new THREE.BoxGeometry(3.8, 0.08, 3.8);
-    const pcbMat = matteMat(0x0c1322, 0.65, 0.25);
-    const pcb = new THREE.Mesh(pcbGeo, pcbMat);
-    pcb.castShadow = true;
-    pcb.receiveShadow = true;
-    group.add(pcb);
+    const w = monitorCanvasRef.current.width;
+    const h = monitorCanvasRef.current.height;
 
-    // Subtle golden PCB trace lines on surface
-    const traceMat = goldMat();
-    for (let i = 0; i < 8; i++) {
-      const trace = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.085, 1.4), traceMat);
-      trace.position.set(-0.3 + i * 0.15, 0.005, 0.2);
-      group.add(trace);
+    // Background
+    if (!poweredOn) {
+      ctx.fillStyle = '#05070a';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#1e293b';
+      ctx.font = 'bold 34px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('STANDBY / KAPALI', w / 2, h / 2 - 20);
+      ctx.fillStyle = '#475569';
+      ctx.font = '22px monospace';
+      ctx.fillText('Montajı tamamlayıp güç düğmesine basınız.', w / 2, h / 2 + 30);
+
+      // Blinking amber dot
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.arc(w / 2, h / 2 + 90, 8, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      // Powered On: Cyber Blue/Green Terminal
+      ctx.fillStyle = '#020617';
+      ctx.fillRect(0, 0, w, h);
+
+      // Scanline effect
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.04)';
+      for (let y = 0; y < h; y += 4) {
+        ctx.fillRect(0, y, w, 2);
+      }
+
+      // Top BIOS Header Bar
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, w, 70);
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 28px monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText('BOZOK UEFI BIOS v2.4 (c) 2026', 25, 45);
+
+      ctx.fillStyle = '#22c55e';
+      ctx.font = 'bold 20px monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText('SİSTEM: ÇALIŞIYOR', w - 25, 45);
+
+      // Content Lines
+      ctx.textAlign = 'left';
+      lines.forEach((line, idx) => {
+        const yPos = 120 + idx * 44;
+        ctx.fillStyle = line.includes('[OK]') ? '#4ade80' : line.includes('HATA') ? '#ef4444' : '#94a3b8';
+        ctx.font = 'bold 23px monospace';
+        ctx.fillText(`> ${line}`, 30, yPos);
+      });
     }
 
-    // 2. CPU Socket LGA Base & Silver Frame
-    const socketBase = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.1, 1.25), matteMat(0x27272a));
-    socketBase.position.set(-0.65, 0.05, -0.55);
-    group.add(socketBase);
+    monitorTextureRef.current.needsUpdate = true;
+  }, []);
 
-    // Socket golden pin grid inside
-    const pinGrid = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.11, 0.95), goldMat());
-    pinGrid.position.set(-0.65, 0.055, -0.55);
-    group.add(pinGrid);
-
-    // Metal Retention Frame & Lever
-    const socketFrame = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.12, 1.15), metallicMat(0x94a3b8, 0.2, 0.9));
-    socketFrame.position.set(-0.65, 0.065, -0.55);
-    group.add(socketFrame);
-
-    const lever = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.2, 8), metallicMat(0xcfd8dc));
-    lever.rotation.x = Math.PI / 2;
-    lever.position.set(-1.25, 0.09, -0.55);
-    group.add(lever);
-
-    // 4 CPU Cooler Mounting Standoff Holes
-    [
-      [-1.15, -1.05],
-      [-0.15, -1.05],
-      [-1.15, -0.05],
-      [-0.15, -0.05]
-    ].forEach(([sx, sz]) => {
-      const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.14, 12), metallicMat(0x64748b));
-      hole.position.set(sx, 0.07, sz);
-      group.add(hole);
-    });
-
-    // 3. VRM Massive Aluminum Heatsinks (Top & Left of CPU)
-    const vrm1 = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.45, 1.4), metallicMat(0x334155, 0.3, 0.7));
-    vrm1.position.set(-1.45, 0.25, -0.55);
-    group.add(vrm1);
-
-    const vrm2 = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.45, 0.45), metallicMat(0x334155, 0.3, 0.7));
-    vrm2.position.set(-0.65, 0.25, -1.45);
-    group.add(vrm2);
-
-    // 4. DDR RAM Slots (4 Slots, slots 2 and 4 color highlighted)
-    [-0.3, -0.1, 0.1, 0.3].forEach((offset, idx) => {
-      const slotGeo = new THREE.BoxGeometry(0.12, 0.18, 2.0);
-      const isDualChan = idx === 1 || idx === 3;
-      const slotMat = isDualChan ? matteMat(0x2563eb) : matteMat(0x1e293b);
-      const slot = new THREE.Mesh(slotGeo, slotMat);
-      slot.position.set(0.65 + offset, 0.1, -0.45);
-      group.add(slot);
-
-      // White latches on ends
-      [-1.0, 1.0].forEach(lz => {
-        const latch = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.22, 0.1), matteMat(0xf8fafc));
-        latch.position.set(0.65 + offset, 0.12, -0.45 + lz);
-        group.add(latch);
-      });
-    });
-
-    // 5. PCIe Slots (x16 top reinforced, x16 bottom)
-    const pcie1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.16, 0.14), metallicMat(0x94a3b8, 0.2, 0.8));
-    pcie1.position.set(0.0, 0.09, 0.45);
-    group.add(pcie1);
-
-    const pcie2 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.15, 0.14), matteMat(0x1e293b));
-    pcie2.position.set(0.0, 0.08, 1.25);
-    group.add(pcie2);
-
-    // 6. M.2 Slot Base & Standoff Screw
-    const m2Base = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.12, 0.4), matteMat(0x0f172a));
-    m2Base.position.set(-0.65, 0.07, -0.05);
-    group.add(m2Base);
-
-    const m2Screw = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.14, 12), metallicMat(0xd4af37));
-    m2Screw.position.set(0.95, 0.08, -0.05);
-    group.add(m2Screw);
-
-    // 7. 24-Pin ATX Power Header (White connector block with pins)
-    const atxHeader = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.24, 1.3), matteMat(0xf1f5f9));
-    atxHeader.position.set(1.65, 0.14, -0.65);
-    group.add(atxHeader);
-
-    // 8. Chipset Heatsink with RGB Logo Area
-    const chipset = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.25, 1.0), metallicMat(0x1e293b, 0.25, 0.8));
-    chipset.position.set(1.15, 0.14, 0.95);
-    group.add(chipset);
-
-    const chipsetLed = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.27, 0.6), glowMat(0x6366f1, 0.4));
-    chipsetLed.position.set(1.15, 0.14, 0.95);
-    group.add(chipsetLed);
-    rgbMeshesRef.current.push(chipsetLed);
-
-    // 9. Rear I/O Ports Shield Block
-    const ioBlock = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.7, 2.0), metallicMat(0x475569, 0.3, 0.7));
-    ioBlock.position.set(-1.6, 0.36, -0.85);
-    group.add(ioBlock);
-
-    return group;
-  };
-
-  // Construct Assembleable 3D Components
-  const buildCpuModel = (): THREE.Group => {
+  // Build Procedural High-Fidelity Cooler (Tower Heatsink with 120mm RGB Fan)
+  const buildHighEndCooler = (): THREE.Group => {
     const group = new THREE.Group();
-    // PCB Substrate
-    const pcb = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.06, 1.05), matteMat(0x14532d));
-    group.add(pcb);
-    // Silver IHS
-    const ihs = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.08, 0.85), metallicMat(0xe2e8f0, 0.15, 0.9));
-    ihs.position.y = 0.05;
-    group.add(ihs);
-    // Golden Triangle Corner
-    const tri = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.03, 3), goldMat());
-    tri.position.set(-0.45, 0.07, -0.45);
-    tri.rotation.y = Math.PI / 4;
-    group.add(tri);
-    return group;
-  };
+    group.name = 'cpu_tower_cooler';
 
-  const buildCoolerModel = (): THREE.Group => {
-    const group = new THREE.Group();
-    // Copper Base
-    const copperBase = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.08, 1.0), metallicMat(0xb45309, 0.2, 0.9));
-    group.add(copperBase);
+    // 1. Mirror Polished Copper Baseplate
+    const baseplate = new THREE.Mesh(
+      new THREE.BoxGeometry(0.85, 0.08, 0.85),
+      metallicMat(0xb45309, 0.1, 0.95)
+    );
+    baseplate.position.y = 0.04;
+    group.add(baseplate);
 
-    // Heatpipes
-    [-0.3, 0.3].forEach(px => {
-      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.8, 12), metallicMat(0xb45309, 0.2, 0.9));
-      pipe.position.set(px, 0.35, 0);
+    // 2. 4 U-Shaped Copper Heatpipes
+    [-0.24, -0.08, 0.08, 0.24].forEach(hx => {
+      const pipeGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.85, 12);
+      const pipe = new THREE.Mesh(pipeGeo, metallicMat(0xb45309, 0.15, 0.95));
+      pipe.position.set(hx, 0.45, 0);
       group.add(pipe);
     });
 
-    // Aluminum Fin Stack
-    const finStack = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.55, 1.0), metallicMat(0xcfd8dc, 0.25, 0.8));
-    finStack.position.y = 0.35;
-    group.add(finStack);
-
-    // RGB Fan Shroud on top
-    const fanFrame = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.12, 1.25), matteMat(0x0f172a));
-    fanFrame.position.y = 0.68;
-    group.add(fanFrame);
-
-    // RGB Glowing Outer Ring
-    const rgbRing = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.04, 16, 32), glowMat(0x06b6d4, 0.7));
-    rgbRing.rotation.x = Math.PI / 2;
-    rgbRing.position.y = 0.72;
-    group.add(rgbRing);
-    rgbMeshesRef.current.push(rgbRing);
-
-    // Rotating Fan Blades Group
-    const bladesGroup = new THREE.Group();
-    bladesGroup.position.y = 0.72;
-
-    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.06, 16), metallicMat(0x38bdf8));
-    bladesGroup.add(hub);
-
-    for (let b = 0; b < 7; b++) {
-      const blade = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.03, 0.08), matteMat(0x1e293b));
-      const angle = (b / 7) * Math.PI * 2;
-      blade.position.set(Math.cos(angle) * 0.28, 0, Math.sin(angle) * 0.28);
-      blade.rotation.y = angle + 0.3;
-      bladesGroup.add(blade);
+    // 3. 28 Aluminum Cooling Fin Stack
+    for (let f = 0; f < 24; f++) {
+      const fin = new THREE.Mesh(
+        new THREE.BoxGeometry(0.95, 0.012, 0.75),
+        metallicMat(0xd1d5db, 0.2, 0.85)
+      );
+      fin.position.set(0, 0.16 + f * 0.028, 0);
+      group.add(fin);
     }
 
-    group.add(bladesGroup);
-    fanBladeGroupRef.current = bladesGroup;
+    // 4. 120mm RGB Fan Assembly
+    const fanFrame = new THREE.Mesh(
+      new THREE.BoxGeometry(0.98, 0.98, 0.16),
+      matteMat(0x18181b, 0.8, 0.2)
+    );
+    fanFrame.position.set(0, 0.48, 0.46);
+    group.add(fanFrame);
+
+    // RGB Halo Ring
+    const halo = new THREE.Mesh(
+      new THREE.TorusGeometry(0.38, 0.03, 16, 32),
+      glowMat(0x06b6d4, 0.8)
+    );
+    halo.position.set(0, 0.48, 0.55);
+    group.add(halo);
+    rgbMeshesRef.current.push(halo);
+
+    // Rotating Fan Blades Hub
+    const fanHub = new THREE.Group();
+    fanHub.position.set(0, 0.48, 0.54);
+
+    const centerCap = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.14, 0.14, 0.04, 16),
+      metallicMat(0x38bdf8, 0.3, 0.8)
+    );
+    centerCap.rotation.x = Math.PI / 2;
+    fanHub.add(centerCap);
+
+    for (let b = 0; b < 9; b++) {
+      const blade = new THREE.Mesh(
+        new THREE.BoxGeometry(0.24, 0.05, 0.015),
+        matteMat(0x27272a, 0.6, 0.3)
+      );
+      const angle = (b / 9) * Math.PI * 2;
+      blade.position.set(Math.cos(angle) * 0.24, Math.sin(angle) * 0.24, 0);
+      blade.rotation.z = angle + 0.35;
+      fanHub.add(blade);
+    }
+
+    group.add(fanHub);
+    coolerFanRef.current = fanHub;
 
     return group;
   };
 
-  const buildRamModel = (): THREE.Group => {
-    const group = new THREE.Group();
-    // PCB strip
-    const pcb = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.42, 1.8), matteMat(0x0f172a));
-    group.add(pcb);
-
-    // Heatspreader plates (Both sides)
-    const spreader = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.36, 1.82), metallicMat(0x1e1b4b, 0.3, 0.7));
-    spreader.position.y = 0.04;
-    group.add(spreader);
-
-    // Gold fingers at bottom
-    const goldPins = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.08, 1.7), goldMat());
-    goldPins.position.y = -0.22;
-    group.add(goldPins);
-
-    // Top RGB Diffuser Strip
-    const rgbBar = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.08, 1.84), glowMat(0xa855f7, 0.9));
-    rgbBar.position.y = 0.24;
-    group.add(rgbBar);
-    rgbMeshesRef.current.push(rgbBar);
-
-    return group;
-  };
-
-  const buildGpuModel = (): THREE.Group => {
+  // Build Braided 24-Pin ATX Cable Harness
+  const buildBraidedPowerCable = (): THREE.Group => {
     const group = new THREE.Group();
 
-    // Shroud Body
-    const shroud = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.9, 0.45), matteMat(0x18181b, 0.5, 0.5));
-    shroud.position.y = 0.35;
-    group.add(shroud);
+    // 24-Pin Nylon Connector Plug (White)
+    const plug = new THREE.Mesh(
+      new THREE.BoxGeometry(0.28, 0.28, 1.15),
+      matteMat(0xf8fafc, 0.8, 0.1)
+    );
+    plug.position.y = 0.05;
+    group.add(plug);
 
-    // Dual Fans
-    const fans: THREE.Group[] = [];
-    [-0.55, 0.55].forEach(fx => {
-      const fanObj = new THREE.Group();
-      fanObj.position.set(fx, 0.35, 0.24);
+    // Side latch
+    const latch = new THREE.Mesh(
+      new THREE.BoxGeometry(0.06, 0.22, 0.25),
+      matteMat(0xe2e8f0)
+    );
+    latch.position.set(0.16, 0.05, 0);
+    group.add(latch);
 
-      const rim = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.03, 12, 24), metallicMat(0x52525b));
-      fanObj.add(rim);
-
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.04, 16), metallicMat(0x38bdf8));
-      hub.rotation.x = Math.PI / 2;
-      fanObj.add(hub);
-
-      for (let b = 0; b < 6; b++) {
-        const blade = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 0.02), matteMat(0x27272a));
-        const angle = (b / 6) * Math.PI * 2;
-        blade.position.set(Math.cos(angle) * 0.2, Math.sin(angle) * 0.2, 0);
-        blade.rotation.z = angle + 0.3;
-        fanObj.add(blade);
-      }
-      group.add(fanObj);
-      fans.push(fanObj);
-    });
-    gpuFansRef.current = fans;
-
-    // Bottom Gold PCIe Connector
-    const pcieGold = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.16, 0.06), goldMat());
-    pcieGold.position.set(0.1, -0.15, -0.16);
-    group.add(pcieGold);
-
-    // Silver Rear Bracket
-    const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.2, 0.6), metallicMat(0xd1d5db, 0.15, 0.9));
-    bracket.position.set(-1.14, 0.35, 0);
-    group.add(bracket);
-
-    // Side Glowing Logo Bar
-    const logo = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.1, 0.05), glowMat(0xf59e0b, 0.8));
-    logo.position.set(0, 0.82, 0.18);
-    group.add(logo);
-    rgbMeshesRef.current.push(logo);
-
-    return group;
-  };
-
-  const buildSsdModel = (): THREE.Group => {
-    const group = new THREE.Group();
-    // PCB stick
-    const pcb = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.04, 0.32), matteMat(0x064e3b));
-    group.add(pcb);
-
-    // NAND Flash & Controller chips
-    const chip1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.04, 0.24), matteMat(0x18181b));
-    chip1.position.set(-0.25, 0.03, 0);
-    group.add(chip1);
-
-    const chip2 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.04, 0.24), matteMat(0x18181b));
-    chip2.position.set(0.25, 0.03, 0);
-    group.add(chip2);
-
-    // Cyan NVMe Aluminum Heatsink Cover
-    const heatsink = new THREE.Mesh(new THREE.BoxGeometry(1.1, 0.05, 0.34), metallicMat(0x10b981, 0.3, 0.8));
-    heatsink.position.set(0.05, 0.06, 0);
-    group.add(heatsink);
-
-    // Gold connector pins
-    const goldPins = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.03, 0.28), goldMat());
-    goldPins.position.set(-0.72, 0, 0);
-    group.add(goldPins);
-
-    // Green Activity Indicator LED
-    const led = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.04), glowMat(0x22c55e, 0.6));
-    led.position.set(0.58, 0.08, 0.1);
-    group.add(led);
-    rgbMeshesRef.current.push(led);
-
-    return group;
-  };
-
-  const buildCableModel = (): THREE.Group => {
-    const group = new THREE.Group();
-
-    // 24-Pin ATX Connector Head (White Nylon Plug)
-    const plugHead = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.35, 1.25), matteMat(0xf8fafc, 0.8, 0.1));
-    group.add(plugHead);
-
-    // Locking Clip on side
-    const clip = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.28, 0.3), matteMat(0xe2e8f0));
-    clip.position.set(0.2, 0.05, 0);
-    group.add(clip);
-
-    // Braided Cable bundle looping upwards and towards PSU
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0.2, 0),
-      new THREE.Vector3(0.4, 0.7, 0.1),
-      new THREE.Vector3(1.1, 0.6, 0.3),
-      new THREE.Vector3(1.6, 0.3, 0.5)
-    ]);
-    const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.16, 12, false);
-    const tubeMat = matteMat(0x1e1b4b, 0.7, 0.2);
-    const tube = new THREE.Mesh(tubeGeo, tubeMat);
-    group.add(tube);
-
-    // Neon Accent cable combs / clips
-    [0.3, 0.7].forEach(tVal => {
-      const pt = curve.getPoint(tVal);
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.19, 0.03, 8, 16), glowMat(0xec4899, 0.7));
-      ring.position.copy(pt);
-      group.add(ring);
-      rgbMeshesRef.current.push(ring);
+    // 4 Bundles of braided nylon cables curving toward the PSU
+    [-0.3, -0.1, 0.1, 0.3].forEach((zOff) => {
+      const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.18, zOff * 0.8),
+        new THREE.Vector3(0.35, 0.55, zOff * 0.7),
+        new THREE.Vector3(0.9, 0.45, zOff * 0.5),
+        new THREE.Vector3(1.4, 0.2, zOff * 0.2)
+      ]);
+      const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.045, 8, false);
+      const tubeMat = matteMat(0x18181b, 0.8, 0.1);
+      const cable = new THREE.Mesh(tubeGeo, tubeMat);
+      group.add(cable);
     });
 
+    // Cable Comb (Clear Acrylic Clip)
+    const comb = new THREE.Mesh(
+      new THREE.BoxGeometry(0.05, 0.15, 0.65),
+      glowMat(0xec4899, 0.5)
+    );
+    comb.position.set(0.45, 0.52, 0);
+    group.add(comb);
+    rgbMeshesRef.current.push(comb);
+
     return group;
   };
 
-  // Build Workbench Environment (Table, ESD Mat, PSU, Diagnostics Monitor)
-  const buildWorkbench = (): THREE.Group => {
+  // Build Engineering Open Test Bench Frame
+  const buildBenchTable = (): THREE.Group => {
     const group = new THREE.Group();
 
-    // 1. Brushed Gunmetal Desk Surface
-    const deskGeo = new THREE.BoxGeometry(11, 0.3, 8);
-    const deskMat = matteMat(0x090b10, 0.8, 0.2);
-    const desk = new THREE.Mesh(deskGeo, deskMat);
-    desk.position.y = -0.2;
-    desk.receiveShadow = true;
-    group.add(desk);
+    // 1. Heavy Anodized Aluminum Top Plate
+    const plateGeo = new THREE.BoxGeometry(7.2, 0.18, 5.8);
+    const plateMat = matteMat(0x111318, 0.7, 0.5);
+    const plate = new THREE.Mesh(plateGeo, plateMat);
+    plate.position.y = 0.09;
+    plate.receiveShadow = true;
+    group.add(plate);
 
-    // 2. Anti-Static ESD Grid Mat under Motherboard
-    const matGeo = new THREE.BoxGeometry(5.2, 0.03, 4.8);
-    const matCover = matteMat(0x0f172a, 0.9, 0.1);
-    const esdMat = new THREE.Mesh(matGeo, matCover);
-    esdMat.position.set(0.1, -0.04, 0);
+    // 2. 4 Solid Chrome Extrusion Legs
+    [
+      [-3.3, -2.6],
+      [3.3, -2.6],
+      [-3.3, 2.6],
+      [3.3, 2.6]
+    ].forEach(([lx, lz]) => {
+      const leg = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.16, 0.16, 0.8, 16),
+        metallicMat(0x94a3b8, 0.2, 0.9)
+      );
+      leg.position.set(lx, -0.3, lz);
+      group.add(leg);
+
+      const foot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.24, 0.24, 0.08, 16),
+        matteMat(0x18181b)
+      );
+      foot.position.set(lx, -0.66, lz);
+      group.add(foot);
+    });
+
+    // 3. Antistatic ESD Grid Mat with Measurement Marks
+    const matGeo = new THREE.BoxGeometry(5.4, 0.02, 4.4);
+    const matMat = matteMat(0x0c1322, 0.85, 0.15);
+    const esdMat = new THREE.Mesh(matGeo, matMat);
+    esdMat.position.set(0, 0.19, 0);
     esdMat.receiveShadow = true;
     group.add(esdMat);
 
-    // Mat Neon Border Glow
-    const border = new THREE.Mesh(new THREE.BoxGeometry(5.24, 0.035, 4.84), glowMat(0x38bdf8, 0.2));
-    border.position.set(0.1, -0.042, 0);
+    // Mat Cyan Glowing Perimeter Border
+    const border = new THREE.Mesh(
+      new THREE.BoxGeometry(5.44, 0.025, 4.44),
+      glowMat(0x0284c7, 0.4)
+    );
+    border.position.set(0, 0.188, 0);
     group.add(border);
 
-    // 3. Power Supply Unit (PSU) on Table
-    const psuGeo = new THREE.BoxGeometry(1.8, 1.2, 2.0);
-    const psuMat = matteMat(0x18181b, 0.6, 0.4);
-    const psu = new THREE.Mesh(psuGeo, psuMat);
-    psu.position.set(3.4, 0.45, -0.6);
-    psu.castShadow = true;
-    group.add(psu);
+    // 4. Brass Motherboard Standoffs (Elevating the board)
+    [
+      [-1.8, -1.8],
+      [1.8, -1.8],
+      [-1.8, 1.8],
+      [1.8, 1.8],
+      [0, -1.8],
+      [0, 1.8]
+    ].forEach(([sx, sz]) => {
+      const standoff = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 0.24, 12),
+        metallicMat(0xd4af37, 0.2, 0.9)
+      );
+      standoff.position.set(sx, 0.31, sz);
+      group.add(standoff);
+    });
 
-    // PSU Gold 80+ Badge
-    const psuBadge = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.24, 0.35), goldMat());
-    psuBadge.position.set(2.48, 0.6, -0.6);
-    group.add(psuBadge);
+    // 5. Vandal Momentary Power Switch with Glowing Ring (Front of Bench)
+    const switchBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.18, 0.08, 24),
+      metallicMat(0xe2e8f0, 0.1, 0.95)
+    );
+    switchBase.position.set(2.8, 0.22, 2.4);
+    group.add(switchBase);
 
-    // PSU Fan Grill
-    const psuGrill = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.04, 16), metallicMat(0x3f3f46));
-    psuGrill.position.set(3.4, 1.06, -0.6);
-    group.add(psuGrill);
+    const switchBtn = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.12, 0.12, 0.09, 24),
+      metallicMat(0x38bdf8, 0.2, 0.9)
+    );
+    switchBtn.position.set(2.8, 0.23, 2.4);
+    group.add(switchBtn);
 
-    // 4. Diagnostic LCD Test Monitor on Stand
-    const monStand = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 1.4, 16), metallicMat(0x64748b));
-    monStand.position.set(-3.2, 0.6, -1.8);
-    group.add(monStand);
-
-    const monFrame = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.4, 0.12), matteMat(0x18181b));
-    monFrame.position.set(-3.2, 1.4, -1.8);
-    monFrame.rotation.y = Math.PI / 5;
-    group.add(monFrame);
-
-    // Monitor Screen Canvas texture
-    const screenGeo = new THREE.BoxGeometry(2.2, 1.2, 0.04);
-    const screenMat = glowMat(0x0284c7, 0.15);
-    const screen = new THREE.Mesh(screenGeo, screenMat);
-    screen.position.set(-3.2, 1.4, -1.74);
-    screen.rotation.y = Math.PI / 5;
-    group.add(screen);
-    monitorScreenMeshRef.current = screen;
+    const switchLed = new THREE.Mesh(
+      new THREE.TorusGeometry(0.13, 0.015, 12, 24),
+      glowMat(0x10b981, 0.9)
+    );
+    switchLed.rotation.x = Math.PI / 2;
+    switchLed.position.set(2.8, 0.27, 2.4);
+    group.add(switchLed);
+    rgbMeshesRef.current.push(switchLed);
 
     return group;
   };
 
-  // Initialize Three.js scene
+  // Preload All 3D GLTF Models on Mount
   useEffect(() => {
-    if (!containerRef.current || !canvasRef.current) return;
+    const loader = new GLTFLoader();
+    const urlsToLoad = [
+      { id: 'motherboard', url: '/models/motherboard.glb' },
+      { id: 'cpu', url: '/models/cpu.glb' },
+      { id: 'ram', url: '/models/ram.glb' },
+      { id: 'gpu', url: '/models/graphics-card.glb' },
+      { id: 'storage', url: '/models/storage.glb' },
+      { id: 'psu', url: '/models/psu.glb' },
+      { id: 'monitor', url: '/models/monitor.glb' }
+    ];
+
+    let loadedCount = 0;
+    urlsToLoad.forEach(item => {
+      loader.load(
+        item.url,
+        (gltf) => {
+          // Enable shadow casting and receiving for all meshes
+          gltf.scene.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          loadedGltfCacheRef.current.set(item.id, gltf.scene);
+          loadedCount++;
+          setLoadingProgress(Math.round((loadedCount / urlsToLoad.length) * 100));
+
+          if (loadedCount >= urlsToLoad.length) {
+            setIsLoadingModels(false);
+          }
+        },
+        undefined,
+        () => {
+          // If a file fails, proceed gracefully
+          loadedCount++;
+          setLoadingProgress(Math.round((loadedCount / urlsToLoad.length) * 100));
+          if (loadedCount >= urlsToLoad.length) {
+            setIsLoadingModels(false);
+          }
+        }
+      );
+    });
+  }, []);
+
+  // Main Three.js Scene Setup (Runs once after models are preloaded)
+  useEffect(() => {
+    if (isLoadingModels || !containerRef.current || !canvasRef.current) return;
 
     const width = containerRef.current.clientWidth;
     const height = containerRef.current.clientHeight;
 
-    // 1. Scene
+    // 1. Scene with Deep OLED Vignette & Fog
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x06070a);
-    scene.fog = new THREE.FogExp2(0x06070a, 0.045);
+    scene.fog = new THREE.FogExp2(0x06070a, 0.04);
     sceneRef.current = scene;
 
-    // 2. Camera
+    // 2. Camera: Isometric Perspective
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(3.8, 3.6, 4.4);
-    camera.lookAt(0, 0.2, 0);
+    camera.position.set(3.8, 3.4, 4.4);
+    camera.lookAt(0, 0.4, 0);
     cameraRef.current = camera;
 
-    // 3. Renderer
+    // 3. Renderer with ACESFilmic Tone Mapping (Key for Photorealism!)
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       antialias: true,
@@ -604,51 +557,127 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
     renderer.setPixelRatio(getOptimalPixelRatio());
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
     rendererRef.current = renderer;
 
-    // 4. Controls
+    // 4. Orbit Controls (Optimized for Touch & Smartboard)
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
-    controls.target.set(0, 0.2, 0);
+    controls.target.set(0, 0.4, 0);
     controls.minDistance = 2.2;
     controls.maxDistance = 11.0;
-    controls.maxPolarAngle = Math.PI / 2 - 0.02; // Keep camera strictly above workbench
+    controls.maxPolarAngle = Math.PI / 2 - 0.04; // Don't clip below workbench
     controls.touches = {
       ONE: THREE.TOUCH.ROTATE,
       TWO: THREE.TOUCH.DOLLY_PAN
     };
     controlsRef.current = controls;
 
-    // 5. Lighting
-    const ambientLight = new THREE.AmbientLight(0xdbeafe, 1.2);
+    // 5. Studio Lighting Setup
+    const ambientLight = new THREE.AmbientLight(0xdbeafe, 1.4);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.4);
-    keyLight.position.set(5, 9, 6);
+    const keyLight = new THREE.DirectionalLight(0xfff8f0, 2.6);
+    keyLight.position.set(4, 9, 5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
-    keyLight.shadow.bias = -0.001;
+    keyLight.shadow.bias = -0.0005;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
-    rimLight.position.set(-6, 5, -5);
-    scene.add(rimLight);
-
-    const fillLight = new THREE.PointLight(0xa855f7, 1.0, 10);
-    fillLight.position.set(0, 3, 0);
+    const fillLight = new THREE.DirectionalLight(0x93c5fd, 1.2);
+    fillLight.position.set(-5, 6, -4);
     scene.add(fillLight);
 
-    // 6. Add Workbench Environment & Motherboard
-    const workbench = buildWorkbench();
-    scene.add(workbench);
-    workbenchGroupRef.current = workbench;
+    const rimLight = new THREE.PointLight(0xa855f7, 0.9, 12);
+    rimLight.position.set(0, 3.5, 0);
+    scene.add(rimLight);
 
-    const motherboard = buildMotherboardBase();
-    scene.add(motherboard);
+    // 6. Add Engineering Bench Table
+    const bench = buildBenchTable();
+    scene.add(bench);
 
-    // 7. Handle Resize with ResizeObserver
+    // 7. Add Real 3D Motherboard (`motherboard.glb`)
+    const moboGltf = loadedGltfCacheRef.current.get('motherboard');
+    if (moboGltf) {
+      const moboClone = moboGltf.clone(true);
+      // Auto center around origin
+      const box = new THREE.Box3().setFromObject(moboClone);
+      const center = box.getCenter(new THREE.Vector3());
+
+      const boardWrapper = new THREE.Group();
+      moboClone.position.set(-center.x, -center.y, -center.z);
+      boardWrapper.add(moboClone);
+
+      // Lay flat on test bench
+      boardWrapper.rotation.x = -Math.PI / 2;
+      const moboScale = 0.42;
+      boardWrapper.scale.set(moboScale, moboScale, moboScale);
+      boardWrapper.position.set(0, 0.45, 0);
+
+      scene.add(boardWrapper);
+    }
+
+    // 8. Add Real 3D Power Supply Unit (`psu.glb`)
+    const psuGltf = loadedGltfCacheRef.current.get('psu');
+    if (psuGltf) {
+      const psuClone = psuGltf.clone(true);
+      const box = new THREE.Box3().setFromObject(psuClone);
+      const center = box.getCenter(new THREE.Vector3());
+
+      const psuWrapper = new THREE.Group();
+      psuClone.position.set(-center.x, -center.y, -center.z);
+      psuWrapper.add(psuClone);
+
+      psuWrapper.scale.set(0.38, 0.38, 0.38);
+      psuWrapper.position.set(2.8, 0.65, -0.4);
+      scene.add(psuWrapper);
+    }
+
+    // 9. Add Real 3D Diagnostic Monitor (`monitor.glb`) with Dynamic Live Canvas Screen
+    const monitorCanvas = document.createElement('canvas');
+    monitorCanvas.width = 1024;
+    monitorCanvas.height = 640;
+    monitorCanvasRef.current = monitorCanvas;
+
+    const monitorTexture = new THREE.CanvasTexture(monitorCanvas);
+    monitorTexture.colorSpace = THREE.SRGBColorSpace;
+    monitorTextureRef.current = monitorTexture;
+
+    // Draw initial standby state
+    updateMonitorDisplay([], false);
+
+    const monGltf = loadedGltfCacheRef.current.get('monitor');
+    if (monGltf) {
+      const monClone = monGltf.clone(true);
+      const box = new THREE.Box3().setFromObject(monClone);
+      const center = box.getCenter(new THREE.Vector3());
+
+      // Replace screen material with our dynamic canvas texture
+      monClone.traverse((child) => {
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          if (mesh.name.includes('RenderMonitor') || mesh.name.includes('Screen') || mesh.name.includes('Cube_RenderMonitor')) {
+            mesh.material = new THREE.MeshBasicMaterial({
+              map: monitorTexture
+            });
+          }
+        }
+      });
+
+      const monWrapper = new THREE.Group();
+      monClone.position.set(-center.x, -center.y, -center.z);
+      monWrapper.add(monClone);
+
+      monWrapper.scale.set(0.12, 0.12, 0.12);
+      monWrapper.position.set(-3.2, 0.5, -1.2);
+      monWrapper.rotation.y = Math.PI / 4;
+      scene.add(monWrapper);
+    }
+
+    // 10. ResizeObserver
     const handleResize = () => {
       if (!containerRef.current || !rendererRef.current || !cameraRef.current) return;
       const w = containerRef.current.clientWidth;
@@ -659,12 +688,10 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       rendererRef.current.setSize(w, h);
     };
 
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
+    const resizeObserver = new ResizeObserver(() => handleResize());
     resizeObserver.observe(containerRef.current);
 
-    // 8. Animation Loop
+    // 11. Animation Loop
     let clock = new THREE.Clock();
     const animate = () => {
       animFrameRef.current = requestAnimationFrame(animate);
@@ -672,11 +699,10 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Animate any parts sliding/snapping into place
+      // Animate any parts dropping smoothly into sockets
       animatingMeshesRef.current.forEach((item, partId) => {
         item.progress = Math.min(1.0, item.progress + delta * 2.8);
-        // Ease out quad
-        const ease = 1 - (1 - item.progress) * (1 - item.progress);
+        const ease = 1 - Math.pow(1 - item.progress, 3);
         item.group.position.y = item.startY + (item.targetY - item.startY) * ease;
 
         if (item.progress >= 1.0) {
@@ -685,19 +711,19 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
         }
       });
 
-      // If computer is powered on: spin fans & pulse RGB
+      // If powered on: spin CPU cooler fan & GPU fans, cycle RGB lights
       if (isPowerOn) {
-        if (fanBladeGroupRef.current) {
-          fanBladeGroupRef.current.rotation.y += delta * 18.0;
+        if (coolerFanRef.current) {
+          coolerFanRef.current.rotation.z += delta * 18.0;
         }
-        gpuFansRef.current.forEach(f => {
-          f.rotation.z += delta * 14.0;
+        gpuFansRef.current.forEach((fan) => {
+          fan.rotation.z += delta * 15.0;
         });
 
-        // Dynamic RGB wave cycling
-        const hue = (elapsed * 0.3) % 1;
-        const color = new THREE.Color().setHSL(hue, 0.9, 0.6);
-        rgbMeshesRef.current.forEach(mesh => {
+        // Dynamic rainbow RGB wave
+        const hue = (elapsed * 0.35) % 1;
+        const color = new THREE.Color().setHSL(hue, 0.95, 0.6);
+        rgbMeshesRef.current.forEach((mesh) => {
           if (mesh.material && 'emissive' in mesh.material) {
             (mesh.material as THREE.MeshStandardMaterial).emissive.copy(color);
             (mesh.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.9 + Math.sin(elapsed * 4) * 0.3;
@@ -708,7 +734,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       controls.update();
       renderer.render(scene, camera);
 
-      // Project 3D slot positions to 2D screen coordinates for Smartboard touch badges
+      // Project 3D Slot positions to 2D Screen Coordinates
       if (containerRef.current && cameraRef.current) {
         const widthHalf = containerRef.current.clientWidth / 2;
         const heightHalf = containerRef.current.clientHeight / 2;
@@ -743,9 +769,9 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       cancelAnimationFrame(animFrameRef.current);
       renderer.dispose();
     };
-  }, [isPowerOn, installedParts, selectedPartId]);
+  }, [isLoadingModels, isPowerOn, installedParts, selectedPartId, updateMonitorDisplay]);
 
-  // Install a component by ID
+  // Install Hardware Component by ID
   const handleInstallPart = (partId: string) => {
     if (installedParts.has(partId)) return;
 
@@ -764,46 +790,49 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
 
     if (!sceneRef.current) return;
 
-    // Build the 3D model
-    let model: THREE.Group;
-    switch (partId) {
-      case 'cpu':
-        model = buildCpuModel();
-        break;
-      case 'cooler':
-        model = buildCoolerModel();
-        break;
-      case 'ram':
-        model = buildRamModel();
-        break;
-      case 'gpu':
-        model = buildGpuModel();
-        break;
-      case 'ssd':
-        model = buildSsdModel();
-        break;
-      case 'cable':
-        model = buildCableModel();
-        break;
-      default:
-        model = new THREE.Group();
+    // Build or clone real 3D model
+    let modelGroup: THREE.Group;
+
+    if (partId === 'cooler') {
+      modelGroup = buildHighEndCooler();
+    } else if (partId === 'cable') {
+      modelGroup = buildBraidedPowerCable();
+    } else {
+      const gltf = loadedGltfCacheRef.current.get(partId === 'ssd' ? 'storage' : partId === 'gpu' ? 'gpu' : partId);
+      if (gltf) {
+        modelGroup = gltf.clone(true);
+        // Normalize center
+        const box = new THREE.Box3().setFromObject(modelGroup);
+        const center = box.getCenter(new THREE.Vector3());
+        modelGroup.position.set(-center.x, -center.y, -center.z);
+
+        const wrapper = new THREE.Group();
+        wrapper.add(modelGroup);
+        modelGroup = wrapper;
+      } else {
+        modelGroup = new THREE.Group();
+      }
     }
 
-    // Spawn 1.4 units above target slot for smooth sliding snap animation
+    // Scale and Orient to match socket
+    modelGroup.scale.set(part.targetScale, part.targetScale, part.targetScale);
+    modelGroup.rotation.set(...part.rotation);
+
+    // Initial floating spawn position for smooth drop animation
     const targetY = part.slotPos[1];
     const startY = targetY + 1.4;
-    model.position.set(part.slotPos[0], startY, part.slotPos[2]);
-    sceneRef.current.add(model);
+    modelGroup.position.set(part.slotPos[0], startY, part.slotPos[2]);
+    sceneRef.current.add(modelGroup);
 
-    installedMeshesRef.current.set(partId, model);
+    installedMeshesRef.current.set(partId, modelGroup);
     animatingMeshesRef.current.set(partId, {
-      group: model,
+      group: modelGroup,
       startY,
       targetY,
       progress: 0
     });
 
-    // Audio snap
+    // Sound effect
     soundService.playSnap();
 
     // Update state
@@ -813,7 +842,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       return next;
     });
 
-    // Inform user with educational feedback
+    // Educational Turkish feedback
     setFeedbackToast({
       message: `Tebrikler! ${part.name} yerine oturdu. ${part.educationalTip}`,
       type: 'success'
@@ -826,7 +855,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
     }
   };
 
-  // Click on a 3D slot hotspot badge
+  // Click on 3D Slot Hotspot Badge
   const handleSlotBadgeClick = (slotPartId: string) => {
     soundService.playClick();
     if (installedParts.has(slotPartId)) {
@@ -838,11 +867,9 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       return;
     }
 
-    // If currently selected matches this slot, install it!
     if (selectedPartId === slotPartId) {
       handleInstallPart(slotPartId);
     } else {
-      // User tapped a different slot: select it or warn
       const slotPart = ASSEMBLY_PARTS.find(p => p.id === slotPartId);
       setSelectedPartId(slotPartId);
       setFeedbackToast({
@@ -852,27 +879,27 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
     }
   };
 
-  // Camera Presets for Quick Navigation (Akıllı Tahta & Mobile friendly)
+  // Quick Camera Angles (Optimized for Touch Screen & Smartboard)
   const focusCamera = (preset: 'overview' | 'cpu' | 'ram' | 'gpu') => {
     soundService.playSelect();
     if (!controlsRef.current || !cameraRef.current) return;
 
     if (preset === 'overview') {
-      cameraRef.current.position.set(3.8, 3.6, 4.4);
-      controlsRef.current.target.set(0, 0.2, 0);
+      cameraRef.current.position.set(3.8, 3.4, 4.4);
+      controlsRef.current.target.set(0, 0.4, 0);
     } else if (preset === 'cpu') {
-      cameraRef.current.position.set(-0.6, 2.2, 1.2);
-      controlsRef.current.target.set(-0.65, 0.3, -0.55);
+      cameraRef.current.position.set(-0.34, 2.2, 0.6);
+      controlsRef.current.target.set(-0.34, 0.5, -1.02);
     } else if (preset === 'ram') {
-      cameraRef.current.position.set(1.4, 2.0, 1.2);
-      controlsRef.current.target.set(0.65, 0.2, -0.45);
+      cameraRef.current.position.set(1.4, 2.0, 0.4);
+      controlsRef.current.target.set(0.72, 0.5, -1.02);
     } else if (preset === 'gpu') {
-      cameraRef.current.position.set(0.2, 1.8, 2.6);
-      controlsRef.current.target.set(0.0, 0.3, 0.45);
+      cameraRef.current.position.set(-0.16, 1.8, 2.0);
+      controlsRef.current.target.set(-0.16, 0.5, 0.12);
     }
   };
 
-  // The Power-On Grand Finale Sequence
+  // Power On Test (Grand Finale)
   const handlePowerOn = () => {
     if (installedParts.size < ASSEMBLY_PARTS.length || isPowerOn || isPoweringUp) return;
 
@@ -884,32 +911,46 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       type: 'info'
     });
 
-    // Step 1: Fan spin & RGB wave begins
+    // Step 1: Fan spin & RGB wave
     setTimeout(() => {
       setIsPowerOn(true);
-      setBootLogLines([
-        'BOZOK BIOS v2.4 (c) 2026 - Dijital Donanım Lab',
-        'Kontrol: LGA CPU [OK] 100%'
-      ]);
+      const lines = [
+        'BOZOK UEFI BIOS v2.4 (c) 2026',
+        'LGA CPU: Intel Core i7 @ 4.90 GHz [OK]',
+        'Termal Soğutucu: 1850 RPM AKTİF [OK]'
+      ];
+      setBootLogLines(lines);
+      updateMonitorDisplay(lines, true);
     }, 400);
 
     // Step 2: Retro BIOS POST Beep
     setTimeout(() => {
       soundService.playPowerBeep();
-      setBootLogLines(prev => [
-        ...prev,
-        'Kontrol: DDR5 16GB Bellek [OK]',
-        'Kontrol: PCI Express x16 GPU [OK]'
-      ]);
+      const lines = [
+        'BOZOK UEFI BIOS v2.4 (c) 2026',
+        'LGA CPU: Intel Core i7 @ 4.90 GHz [OK]',
+        'Termal Soğutucu: 1850 RPM AKTİF [OK]',
+        'DDR5 RAM: 16 GB Dual-Channel [OK]',
+        'PCIe GPU: NVIDIA GeForce RTX [OK]'
+      ];
+      setBootLogLines(lines);
+      updateMonitorDisplay(lines, true);
     }, 1100);
 
-    // Step 3: Fast SSD & Power Check
+    // Step 3: Fast SSD & Power
     setTimeout(() => {
-      setBootLogLines(prev => [
-        ...prev,
-        'Kontrol: M.2 NVMe SSD 1TB [OK]',
-        'SİSTEM DURUMU: TÜM BİRİMLER ÇALIŞIYOR!'
-      ]);
+      const lines = [
+        'BOZOK UEFI BIOS v2.4 (c) 2026',
+        'LGA CPU: Intel Core i7 @ 4.90 GHz [OK]',
+        'Termal Soğutucu: 1850 RPM AKTİF [OK]',
+        'DDR5 RAM: 16 GB Dual-Channel [OK]',
+        'PCIe GPU: NVIDIA GeForce RTX [OK]',
+        'M.2 NVMe SSD: 1000 GB Gen4 [OK]',
+        'PSU 12V / 5V Güç Beslemesi [OK]',
+        'SİSTEM BAŞARIYLA BAŞLATILDI!'
+      ];
+      setBootLogLines(lines);
+      updateMonitorDisplay(lines, true);
     }, 1700);
 
     // Step 4: Celebration Fanfare + Confetti + Certificate
@@ -918,8 +959,8 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       setIsPoweringUp(false);
 
       confetti({
-        particleCount: 120,
-        spread: 90,
+        particleCount: 130,
+        spread: 100,
         origin: { y: 0.6 }
       });
 
@@ -948,6 +989,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
     setIsPoweringUp(false);
     setShowCertificate(false);
     setBootLogLines([]);
+    updateMonitorDisplay([], false);
     focusCamera('overview');
 
     setFeedbackToast({
@@ -982,7 +1024,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
                 AÇIK TEST MASASI
               </span>
               <span className="hidden md:inline text-xs font-bold text-zinc-400">
-                5 & 6. Sınıf Bilişim Teknolojileri
+                Gerçekçi 3D Donanım Montajı
               </span>
             </div>
             <h1 className="text-sm sm:text-base lg:text-lg font-black text-white flex items-center gap-2">
@@ -1015,10 +1057,11 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
           <div className="hidden sm:flex items-center p-1 rounded-xl bg-lab-900 border border-zinc-800 text-xs font-bold">
             <button
               onClick={() => focusCamera('overview')}
-              className="px-2.5 py-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+              className="px-2.5 py-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition flex items-center gap-1"
               title="Genel Masa Görünümü"
             >
-              Masa
+              <Camera className="w-3.5 h-3.5" />
+              <span>Masa</span>
             </button>
             <button
               onClick={() => focusCamera('cpu')}
@@ -1072,8 +1115,34 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
       <div className="flex-1 relative min-h-0 w-full overflow-hidden" ref={containerRef}>
         <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />
 
+        {/* Loading Overlay while GLB 3D models are downloading */}
+        {isLoadingModels && (
+          <div className="absolute inset-0 z-40 bg-lab-950/95 flex flex-col items-center justify-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center animate-pulse">
+              <Layers className="w-7 h-7 text-emerald-400" />
+            </div>
+            <div className="flex flex-col items-center text-center max-w-xs">
+              <h3 className="text-base font-black text-white mb-1">
+                Gerçekçi 3D Parçalar Yükleniyor...
+              </h3>
+              <p className="text-xs text-zinc-400 mb-3">
+                Asus Anakart, Intel CPU, DDR5 RAM ve RTX Ekran Kartı hazırlanıyor
+              </p>
+              <div className="w-48 h-2 rounded-full bg-zinc-800 overflow-hidden border border-zinc-700/60">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300"
+                  style={{ width: `${loadingProgress}%` }}
+                />
+              </div>
+              <span className="text-[11px] font-bold text-emerald-400 mt-2">
+                %{loadingProgress}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Top Educational Feedback Toast Banner */}
-        {feedbackToast && (
+        {feedbackToast && !isLoadingModels && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-2xl pointer-events-auto animate-in fade-in slide-in-from-top duration-300">
             <div
               className={`p-3 sm:p-3.5 rounded-2xl backdrop-blur-xl border shadow-2xl flex items-center gap-3 ${
@@ -1097,7 +1166,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
         )}
 
         {/* 3D Projected Touch-Friendly Hotspot Badges on Motherboard */}
-        {projectedSlots.map(slot => {
+        {!isLoadingModels && projectedSlots.map(slot => {
           if (!slot.visible || slot.installed) return null;
 
           const isTarget = slot.isTarget;
@@ -1129,22 +1198,24 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
           );
         })}
 
-        {/* 3D Monitor Dynamic Diagnostics Box (Fixed on Left) */}
-        {isPowerOn && (
-          <div className="absolute top-20 left-4 z-20 pointer-events-none hidden md:block">
-            <div className="w-64 p-3 rounded-2xl bg-zinc-950/90 backdrop-blur-md border border-cyan-500/40 shadow-2xl font-mono text-[11px] text-cyan-300">
-              <div className="flex items-center justify-between pb-1.5 border-b border-cyan-900/60 mb-2 font-bold">
-                <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  BOZOK OS v2.4
+        {/* Live BIOS Diagnostics HUD Overlay (When PC is Powered On) */}
+        {isPowerOn && bootLogLines.length > 0 && (
+          <div className="absolute top-20 left-4 z-20 pointer-events-none hidden md:block animate-in fade-in slide-in-from-left duration-300">
+            <div className="w-72 p-3.5 rounded-2xl bg-zinc-950/90 backdrop-blur-md border border-cyan-500/40 shadow-2xl font-mono text-xs text-cyan-300">
+              <div className="flex items-center justify-between pb-2 border-b border-cyan-900/60 mb-2 font-bold">
+                <span className="flex items-center gap-1.5 text-white">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  BOZOK OS CANLI TEST
                 </span>
-                <span className="text-[9px] text-cyan-500">CANLI TEST</span>
+                <span className="text-[10px] text-cyan-400 font-black">UEFI BIOS</span>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 {bootLogLines.map((line, idx) => (
-                  <div key={idx} className="flex items-start gap-1">
-                    <span className="text-emerald-400">›</span>
-                    <span>{line}</span>
+                  <div key={idx} className="flex items-start gap-1.5 leading-tight">
+                    <span className="text-emerald-400 font-bold">›</span>
+                    <span className={line.includes('[OK]') ? 'text-emerald-300 font-semibold' : 'text-zinc-300'}>
+                      {line}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -1153,7 +1224,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
         )}
 
         {/* Floating Quick Action Button: Install Current Selected Part */}
-        {!installedParts.has(selectedPartId) && (
+        {!isLoadingModels && !installedParts.has(selectedPartId) && (
           <div className="absolute bottom-4 right-4 z-20 pointer-events-auto">
             <button
               onClick={() => handleInstallPart(selectedPartId)}
@@ -1176,7 +1247,7 @@ export const AssemblySimulator: React.FC<Props> = ({ onBackToLab, isLargeFont = 
 
       {/* Bottom Area: Parça Çantası / Inventory Drawer & Power-On Bar */}
       <footer className="flex-shrink-0 bg-lab-950/95 border-t border-zinc-800/80 p-2.5 sm:p-3.5 z-30">
-        {/* If all 6 parts are installed, show the Grand Finale Power-On CTA! */}
+        {/* If all 6 parts are installed, show Grand Finale Power-On CTA */}
         {installedParts.size === ASSEMBLY_PARTS.length ? (
           <div className="w-full max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-teal-950/90 to-indigo-950/90 border border-emerald-500/50 shadow-[0_0_35px_rgba(16,185,129,0.35)]">
             <div className="flex items-center gap-3">
