@@ -341,8 +341,8 @@ export const AdminModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in select-none">
-      <div className="w-full max-w-6xl h-[92vh] flex flex-col rounded-3xl bg-lab-900 border border-purple-500/40 shadow-2xl overflow-hidden text-left">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-xl animate-fade-in select-none">
+      <div className="w-full max-w-6xl 3xl:max-w-7xl 4k:max-w-[90rem] h-[95vh] sm:h-[92vh] flex flex-col rounded-2xl sm:rounded-3xl bg-lab-900 border border-purple-500/40 shadow-2xl overflow-hidden text-left">
         {/* Modal Header */}
         <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-lab-950/80">
           <div className="flex items-center gap-3">
@@ -467,9 +467,9 @@ export const AdminModal: React.FC<Props> = ({
 
         {/* Modal Body: Left sidebar (list) + Right Editor Form */}
         {activeTab === 'hardware' ? (
-          <div className="flex-1 flex overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* Left Sidebar: Hardware List */}
-            <div className="w-72 bg-lab-950/60 border-r border-slate-800 overflow-y-auto custom-scrollbar p-3 space-y-1.5">
+            <div className="w-full md:w-72 h-36 md:h-full bg-lab-950/60 border-b md:border-b-0 md:border-r border-slate-800 overflow-y-auto custom-scrollbar p-3 space-y-1.5 flex-shrink-0">
               <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1 flex items-center justify-between">
                 <span>Mevcut Donanımlar ({hardwareList.length})</span>
               </div>

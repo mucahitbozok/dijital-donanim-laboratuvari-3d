@@ -9,6 +9,8 @@ import { CompareModal } from './components/CompareModal';
 import { QuizModal } from './components/QuizModal';
 import { AdminModal } from './components/AdminModal';
 
+import { Box, FileText } from 'lucide-react';
+
 export const App: React.FC = () => {
   // 1. Dataset State (Loaded from localStorage or defaults)
   const [dataset, setDataset] = useState<HardwareDataset>(() => storageService.loadData());
@@ -21,6 +23,9 @@ export const App: React.FC = () => {
 
   // 4. Large font toggle (smartboard readability)
   const [isLargeFont, setIsLargeFont] = useState(false);
+
+  // 5. Mobile Screen View Mode ('3d' or 'info' on mobile devices)
+  const [mobileTab, setMobileTab] = useState<'3d' | 'info'>('3d');
 
   // Safe fallback if selected ID was deleted in admin
   const activeHardware: HardwareItem =
@@ -37,17 +42,62 @@ export const App: React.FC = () => {
         onToggleLargeFont={() => setIsLargeFont(!isLargeFont)}
       />
 
-      {/* Main Workspace (Split into 3D Viewer on Left/Center, Info Panel on Right) */}
+      {/* Mobile Screen View Switcher (Visible only on mobile / small screens) */}
+      <div className="lg:hidden flex items-center justify-between px-3 py-1.5 bg-lab-950/95 border-b border-zinc-800/80 z-20">
+        <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-semibold truncate">
+          <span className="text-white font-bold">{activeHardware.name}</span>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-lab-850 text-zinc-300 border border-zinc-700/60">
+            {activeHardware.category}
+          </span>
+        </div>
+
+        <div className="flex items-center p-0.5 rounded-xl bg-lab-900 border border-zinc-800 flex-shrink-0">
+          <button
+            onClick={() => setMobileTab('3d')}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              mobileTab === '3d'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <Box className="w-3.5 h-3.5" />
+            <span>3D Model</span>
+          </button>
+          <button
+            onClick={() => setMobileTab('info')}
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+              mobileTab === 'info'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>Bilgi Kartı</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Workspace (On Mobile: Clean Switcher; On Desktop & Smartboard: Full Side-by-Side) */}
       <main className="flex-1 flex flex-col lg:flex-row min-h-0 relative overflow-hidden">
-        {/* Left/Center Area: 3D Hardware Explorer */}
-        <div className="flex-1 h-3/5 lg:h-full relative min-h-0">
+        {/* 3D Hardware Explorer */}
+        <div className={`flex-1 h-full relative min-h-0 ${mobileTab === '3d' ? 'flex' : 'hidden lg:flex'}`}>
           <Hardware3DViewer
             hardware={activeHardware}
           />
+          {/* Mobile floating quick badge to switch to Info */}
+          <div className="lg:hidden absolute top-2.5 right-2.5 z-20 pointer-events-auto">
+            <button
+              onClick={() => setMobileTab('info')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-lab-900/90 backdrop-blur-md border border-zinc-700/80 text-xs font-bold text-zinc-200 shadow-xl active:scale-95"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-400" />
+              <span>Bilgileri Aç</span>
+            </button>
+          </div>
         </div>
 
-        {/* Right Area: Dynamic Info Panel */}
-        <div className="w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-2/5 lg:h-full flex-shrink-0 z-10">
+        {/* Dynamic Info Panel */}
+        <div className={`w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-full flex-shrink-0 z-10 ${mobileTab === 'info' ? 'flex' : 'hidden lg:flex'}`}>
           <HardwareInfoPanel
             hardware={activeHardware}
             onOpenQuiz={() => setActiveMode('quiz')}

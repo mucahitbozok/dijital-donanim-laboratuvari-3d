@@ -44,8 +44,8 @@ export const CompareModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-xl animate-fade-in select-none">
-      <div className="w-full max-w-5xl max-h-[90vh] flex flex-col rounded-3xl bg-lab-900 border border-zinc-700/80 shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-xl animate-fade-in select-none">
+      <div className="w-full max-w-5xl 3xl:max-w-6xl 4k:max-w-7xl max-h-[95vh] sm:max-h-[90vh] flex flex-col rounded-2xl sm:rounded-3xl bg-lab-900 border border-zinc-700/80 shadow-2xl overflow-hidden">
         {/* Modal Header */}
         <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-lab-950/80">
           <div className="flex items-center gap-3">
@@ -161,8 +161,8 @@ export const CompareModal: React.FC<Props> = ({
           </div>
 
           {/* Comparison Table */}
-          <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-lab-950/70 shadow-xl text-left">
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto custom-scrollbar rounded-2xl border border-zinc-800 bg-lab-950/70 shadow-xl text-left">
+            <table className="w-full min-w-[500px] border-collapse">
               <thead>
                 <tr className="bg-lab-800/80 border-b border-zinc-700/80">
                   <th className="p-4 text-xs font-bold uppercase tracking-wider text-zinc-400 w-1/4">

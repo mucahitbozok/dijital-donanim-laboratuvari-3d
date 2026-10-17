@@ -152,17 +152,24 @@ export const Hardware3DViewer: React.FC<Props> = ({
 
     scene.add(floorGroup);
 
-    // Handle Window Resizing
+    // Handle Window & Container Resizing (Crucial for mobile orientation and tab switching)
     const handleResize = () => {
       if (!containerRef.current || !rendererRef.current || !cameraRef.current) return;
       const w = containerRef.current.clientWidth;
       const h = containerRef.current.clientHeight;
+      if (w === 0 || h === 0) return;
       cameraRef.current.aspect = w / h;
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(w, h);
       rendererRef.current.setPixelRatio(getOptimalPixelRatio());
     };
     window.addEventListener('resize', handleResize);
+
+    // ResizeObserver watches container bounds directly
+    const resizeObserver = new ResizeObserver(() => {
+      handleResize();
+    });
+    resizeObserver.observe(containerRef.current);
 
     // Animation Loop
     let clock = new THREE.Clock();
@@ -215,6 +222,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       cancelAnimationFrame(animationFrameId.current);
       renderer.dispose();
     };
@@ -494,21 +502,21 @@ export const Hardware3DViewer: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Bottom Floating Control Bar (Touch & Smartboard First) */}
-      <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 z-20 pointer-events-none">
+      {/* Bottom Floating Control Bar (Mobile Phone & Smartboard Responsive) */}
+      <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-4 sm:left-4 sm:right-4 3xl:bottom-6 3xl:left-6 3xl:right-6 flex items-center justify-between gap-1.5 sm:gap-2 z-20 pointer-events-none">
         {/* Left: Camera Angle Presets */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-lab-900/90 backdrop-blur-md border border-zinc-800 shadow-xl pointer-events-auto">
+        <div className="flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl bg-lab-900/90 backdrop-blur-md border border-zinc-800 shadow-xl pointer-events-auto">
           <button
             onClick={() => setCameraView('top')}
-            className="px-3.5 py-2.5 rounded-xl font-semibold text-xs text-zinc-300 hover:text-white hover:bg-zinc-800 active:bg-zinc-700 transition flex items-center gap-1.5 min-h-[48px]"
+            className="px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-xs text-zinc-300 hover:text-white hover:bg-zinc-800 active:bg-zinc-700 transition flex items-center gap-1.5 min-h-[38px] sm:min-h-[48px]"
             title="Üst Görünüm"
           >
-            <Compass className="w-4 h-4 text-zinc-400" />
+            <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400" />
             <span>Üst</span>
           </button>
           <button
             onClick={() => setCameraView('isometric')}
-            className="px-3.5 py-2.5 rounded-xl font-bold text-xs text-amber-400 hover:bg-amber-400/15 active:bg-amber-400/25 transition min-h-[48px]"
+            className="px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-lg sm:rounded-xl font-bold text-xs text-amber-400 hover:bg-amber-400/15 active:bg-amber-400/25 transition min-h-[38px] sm:min-h-[48px]"
             title="Açıyı Sıfırla"
           >
             Sıfırla
@@ -516,40 +524,40 @@ export const Hardware3DViewer: React.FC<Props> = ({
         </div>
 
         {/* Right: Interaction Toggles (Auto-Rotate, Zoom) */}
-        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-lab-900/90 backdrop-blur-md border border-zinc-800 shadow-xl pointer-events-auto">
+        <div className="flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl bg-lab-900/90 backdrop-blur-md border border-zinc-800 shadow-xl pointer-events-auto">
           {/* Auto rotate toggle */}
           <button
             onClick={() => {
               soundService.playClick();
               setIsAutoRotating(!isAutoRotating);
             }}
-            className={`px-3.5 py-2.5 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 min-h-[48px] ${
+            className={`px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-xs transition flex items-center gap-1.5 min-h-[38px] sm:min-h-[48px] ${
               isAutoRotating
                 ? 'bg-zinc-800 text-white border border-zinc-600'
                 : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
             }`}
             title="Otomatik Dönüşü Başlat / Durdur"
           >
-            {isAutoRotating ? <Pause className="w-4 h-4 text-emerald-400" /> : <Play className="w-4 h-4 text-zinc-300" />}
-            <span>{isAutoRotating ? 'Dönüşü Durdur' : 'Oto Döndür'}</span>
+            {isAutoRotating ? <Pause className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" /> : <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-300" />}
+            <span className="hidden sm:inline">{isAutoRotating ? 'Dönüşü Durdur' : 'Oto Döndür'}</span>
           </button>
 
           {/* Zoom In */}
           <button
             onClick={() => handleZoom(-0.8)}
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
+            className="w-9 h-9 sm:w-11 sm:h-11 3xl:w-13 3xl:h-13 rounded-lg sm:rounded-xl flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
             title="Yaklaştır"
           >
-            <ZoomIn className="w-5 h-5" />
+            <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {/* Zoom Out */}
           <button
             onClick={() => handleZoom(0.8)}
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
+            className="w-9 h-9 sm:w-11 sm:h-11 3xl:w-13 3xl:h-13 rounded-lg sm:rounded-xl flex items-center justify-center text-zinc-300 hover:text-white hover:bg-zinc-800 transition"
             title="Uzaklaştır"
           >
-            <ZoomOut className="w-5 h-5" />
+            <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
