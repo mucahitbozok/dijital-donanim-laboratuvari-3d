@@ -80,7 +80,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
       antialias: true,
       powerPreference: 'high-performance'
     });
-    renderer.setSize(width, height);
+    renderer.setSize(width, height, false);
     renderer.setPixelRatio(getOptimalPixelRatio());
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -160,7 +160,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
       if (w === 0 || h === 0) return;
       cameraRef.current.aspect = w / h;
       cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(w, h);
+      rendererRef.current.setSize(w, h, false);
       rendererRef.current.setPixelRatio(getOptimalPixelRatio());
     };
     window.addEventListener('resize', handleResize);
@@ -406,12 +406,12 @@ export const Hardware3DViewer: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full flex flex-col items-center justify-center bg-radial-vignette overflow-hidden select-none"
+      className="relative w-full h-full min-w-0 min-h-0 flex flex-col items-center justify-center bg-radial-vignette overflow-hidden select-none"
     >
       {/* 3D WebGL Canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full h-full cursor-grab active:cursor-grabbing outline-none touch-none"
+        className="w-full h-full max-w-full max-h-full block cursor-grab active:cursor-grabbing outline-none touch-none"
         title="3D Modeli parmağınızla döndürebilir ve yakınlaştırabilirsiniz"
       />
 

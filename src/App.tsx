@@ -79,7 +79,7 @@ export const App: React.FC = () => {
       />
 
       {/* Mobile Screen View Switcher (Visible only on mobile / small screens) */}
-      <div className="lg:hidden flex items-center justify-between px-3 py-1.5 bg-lab-950/95 border-b border-zinc-800/80 z-20">
+      <div className="md:hidden flex items-center justify-between px-3 py-1.5 bg-lab-950/95 border-b border-zinc-800/80 z-20">
         <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-semibold truncate">
           <span className="text-white font-bold">{activeHardware.name}</span>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-lab-850 text-zinc-300 border border-zinc-700/60">
@@ -120,9 +120,9 @@ export const App: React.FC = () => {
       </div>
 
       {/* Main Workspace (On Mobile: Clean Switcher; On Desktop & Smartboard: Full Side-by-Side or Collapsible 3D) */}
-      <main className="flex-1 flex flex-col lg:flex-row min-h-0 relative overflow-hidden">
+      <main className="flex-1 flex flex-col md:flex-row min-h-0 min-w-0 relative overflow-hidden">
         {/* 3D Hardware Explorer */}
-        <div className={`flex-1 h-full relative min-h-0 ${!isInfoPanelVisible ? 'flex w-full' : (mobileTab === '3d' ? 'flex' : 'hidden lg:flex')}`}>
+        <div className={`flex-1 h-full relative min-h-0 min-w-0 overflow-hidden ${!isInfoPanelVisible ? 'flex w-full' : (mobileTab === '3d' ? 'flex' : 'hidden md:flex')}`}>
           <Hardware3DViewer
             hardware={activeHardware}
           />
@@ -147,7 +147,7 @@ export const App: React.FC = () => {
 
           {/* On mobile: if mobileTab === '3d' but infoPanel is open in background, quick button to switch */}
           {isInfoPanelVisible && mobileTab === '3d' && (
-            <div className="lg:hidden absolute top-3 right-3 z-30 pointer-events-auto animate-fade-in">
+            <div className="md:hidden absolute top-3 right-3 z-30 pointer-events-auto animate-fade-in">
               <button
                 onClick={() => {
                   soundService.playClick();
@@ -164,7 +164,7 @@ export const App: React.FC = () => {
 
         {/* Dynamic Info Panel */}
         {isInfoPanelVisible && (
-          <div className={`w-full lg:w-[420px] xl:w-[460px] 2xl:w-[500px] 3xl:w-[580px] 4k:w-[680px] h-full flex-shrink-0 z-20 ${mobileTab === 'info' ? 'flex' : 'hidden lg:flex'}`}>
+          <aside className={`w-full md:w-[400px] lg:w-[450px] xl:w-[480px] 2xl:w-[520px] 3xl:w-[600px] 4k:w-[700px] h-full flex-shrink-0 z-20 min-w-0 flex flex-col animate-fade-in ${mobileTab === 'info' ? 'flex' : 'hidden md:flex'}`}>
             <HardwareInfoPanel
               hardware={activeHardware}
               onOpenQuiz={() => setActiveMode('quiz')}
@@ -174,7 +174,7 @@ export const App: React.FC = () => {
                 setMobileTab('3d');
               }}
             />
-          </div>
+          </aside>
         )}
       </main>
 
