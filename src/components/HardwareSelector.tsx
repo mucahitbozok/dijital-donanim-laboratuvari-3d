@@ -16,7 +16,8 @@ import {
   Radio,
   SlidersHorizontal,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ChevronDown
 } from 'lucide-react';
 
 interface Props {
@@ -33,6 +34,7 @@ export const HardwareSelector: React.FC<Props> = ({
   onSelect
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('Tümü');
+  const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const categoryScrollRef = useRef<HTMLDivElement>(null);
 
@@ -272,13 +274,47 @@ export const HardwareSelector: React.FC<Props> = ({
   };
 
   return (
-    <div className="w-full bg-lab-950/95 border-t border-zinc-800/80 p-3 flex flex-col gap-2.5 backdrop-blur-xl z-20 select-none">
-      {/* Category Pills (Horizontal Scrollable) */}
+    <div className="w-full bg-lab-950/95 border-t border-zinc-800/80 p-2 sm:p-3 flex flex-col gap-1.5 sm:gap-2.5 backdrop-blur-xl z-20 select-none">
+      {/* Mobile-only compact Category Filter Header (< md) */}
+      <div className="flex md:hidden items-center justify-between gap-2 px-1">
+        <button
+          type="button"
+          onClick={() => {
+            soundService.playClick();
+            setIsMobileCategoryOpen(prev => !prev);
+          }}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+            selectedCategory !== 'Tümü'
+              ? 'bg-amber-400/20 border-amber-400/50 text-amber-300 shadow-sm'
+              : 'bg-lab-900/90 border-zinc-800 text-zinc-300 hover:text-white'
+          }`}
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+          <span>Kategori: <strong className="text-white ml-0.5">{selectedCategory}</strong></span>
+          <ChevronDown className={`w-3.5 h-3.5 text-zinc-400 transition-transform duration-200 ${isMobileCategoryOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {selectedCategory !== 'Tümü' && (
+          <button
+            type="button"
+            onClick={() => {
+              soundService.playClick();
+              setSelectedCategory('Tümü');
+              setIsMobileCategoryOpen(false);
+            }}
+            className="text-[11px] font-semibold text-zinc-400 hover:text-amber-400 px-2 py-1 rounded-lg bg-lab-900/70 border border-zinc-800/70 transition"
+          >
+            Tümünü Göster
+          </button>
+        )}
+      </div>
+
+      {/* Category Pills (Horizontal Scrollable: always visible on md+, collapsible on mobile) */}
       <div 
         ref={categoryScrollRef}
-        className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5"
+        className={`${isMobileCategoryOpen ? 'flex animate-fade-in' : 'hidden md:flex'} items-center gap-2 overflow-x-auto no-scrollbar py-0.5`}
       >
-        <div className="flex items-center gap-1.5 px-2.5 text-xs font-bold text-zinc-400 uppercase tracking-wider flex-shrink-0">
+        <div className="hidden md:flex items-center gap-1.5 px-2.5 text-xs font-bold text-zinc-400 uppercase tracking-wider flex-shrink-0">
           <SlidersHorizontal className="w-3.5 h-3.5 text-zinc-400" />
           <span>Kategoriler:</span>
         </div>
@@ -291,6 +327,7 @@ export const HardwareSelector: React.FC<Props> = ({
               onClick={() => {
                 soundService.playClick();
                 setSelectedCategory(cat);
+                setIsMobileCategoryOpen(false);
               }}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 3xl:px-4 3xl:py-2.5 4k:px-5 4k:py-3 rounded-xl 3xl:rounded-2xl text-xs 3xl:text-sm 4k:text-base font-bold whitespace-nowrap transition-all min-h-[38px] 3xl:min-h-[46px] 4k:min-h-[54px] ${
                 isCatSelected
@@ -311,7 +348,7 @@ export const HardwareSelector: React.FC<Props> = ({
 
       {/* Category Educational Description Banner (Visible when a specific category is selected) */}
       {selectedCategory !== 'Tümü' && defaultCategoryDescriptions[selectedCategory] && (
-        <div className="px-3 py-1.5 3xl:px-4 3xl:py-2 rounded-xl bg-lab-900/90 border border-zinc-800/90 text-xs 3xl:text-sm 4k:text-base flex items-center gap-2 text-zinc-300 animate-fade-in">
+        <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 3xl:px-4 3xl:py-2 rounded-xl bg-lab-900/90 border border-zinc-800/90 text-[11px] sm:text-xs 3xl:text-sm 4k:text-base flex items-center gap-2 text-zinc-300 animate-fade-in">
           <span className="font-bold text-amber-400 flex-shrink-0">💡 {selectedCategory}:</span>
           <span className="truncate md:whitespace-normal font-medium">{defaultCategoryDescriptions[selectedCategory]}</span>
         </div>

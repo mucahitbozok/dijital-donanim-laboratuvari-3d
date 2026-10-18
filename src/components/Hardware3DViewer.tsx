@@ -37,7 +37,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
-  const modelGroupRef = useRef<THREE.Group | null>(null);
+  const modelGroupRef = useRef<THREE.Group | THREE.Object3D | null>(null);
   const animationFrameId = useRef<number>(0);
 
   // States
@@ -94,7 +94,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
     controls.maxDistance = 12.0;
     controls.maxPolarAngle = Math.PI / 2 + 0.15; // Don't flip under the floor
     controls.autoRotate = isAutoRotating;
-    controls.autoRotateSpeed = 1.4;
+    controls.autoRotateSpeed = 3.8;
     controls.touches = {
       ONE: THREE.TOUCH.ROTATE,
       TWO: THREE.TOUCH.DOLLY_PAN
@@ -242,22 +242,25 @@ export const Hardware3DViewer: React.FC<Props> = ({
     setIsLoadingModel(true);
     setActiveHotspot(null);
 
-    // Remove previous model group
-    if (modelGroupRef.current) {
-      sceneRef.current.remove(modelGroupRef.current);
-      modelGroupRef.current.traverse((child) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const mesh = child as THREE.Mesh;
-          mesh.geometry.dispose();
-          if (Array.isArray(mesh.material)) {
-            mesh.material.forEach(m => m.dispose());
-          } else {
-            mesh.material.dispose();
+    const applyNewModel = (newModel: THREE.Group | THREE.Object3D) => {
+      if (modelGroupRef.current && sceneRef.current) {
+        sceneRef.current.remove(modelGroupRef.current);
+        modelGroupRef.current.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            mesh.geometry.dispose();
+            if (Array.isArray(mesh.material)) {
+              mesh.material.forEach(m => m.dispose());
+            } else {
+              mesh.material.dispose();
+            }
           }
-        }
-      });
-      modelGroupRef.current = null;
-    }
+        });
+      }
+      modelGroupRef.current = newModel;
+      sceneRef.current?.add(newModel);
+      setIsLoadingModel(false);
+    };
 
     // Candidate URLs: explicit model3d, or auto-detect in /models/{id}.glb + aliases
     const candidateUrls: string[] = [];
@@ -334,9 +337,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
             -center.z * scale
           );
 
-          modelGroupRef.current = loadedModel;
-          sceneRef.current?.add(loadedModel);
-          setIsLoadingModel(false);
+          applyNewModel(loadedModel);
         },
         undefined,
         () => {
@@ -350,9 +351,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
 
     function loadProcedural() {
       const proceduralModel = buildHardwareModel(hardware.id);
-      modelGroupRef.current = proceduralModel;
-      sceneRef.current?.add(proceduralModel);
-      setIsLoadingModel(false);
+      applyNewModel(proceduralModel);
     }
 
     // Reset camera position smoothly
@@ -416,7 +415,7 @@ export const Hardware3DViewer: React.FC<Props> = ({
       />
 
       {/* Loading Overlay */}
-      {isLoadingModel && (
+      {isLoadingModel && !modelGroupRef.current && (
         <div className="absolute inset-0 flex items-center justify-center bg-lab-950/80 backdrop-blur-md z-20">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 border-4 border-zinc-700 border-t-white rounded-full animate-spin" />

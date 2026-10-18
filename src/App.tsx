@@ -51,7 +51,7 @@ export const App: React.FC = () => {
   // 3D PC Montaj Atölyesi Mode
   if (activeMode === 'assembly') {
     return (
-      <div className={`w-screen h-screen flex flex-col bg-lab-950 text-slate-100 overflow-hidden font-sans ${isLargeFont ? 'text-lg' : 'text-base'}`}>
+      <div className={`w-screen h-[100dvh] flex flex-col bg-lab-950 text-slate-100 overflow-hidden font-sans ${isLargeFont ? 'text-lg' : 'text-base'}`}>
         <AssemblySimulator
           onBackToLab={() => setActiveMode('inspect')}
           isLargeFont={isLargeFont}
@@ -61,7 +61,7 @@ export const App: React.FC = () => {
   }
 
   return (
-    <div className={`w-screen h-screen flex flex-col bg-lab-950 text-slate-100 overflow-hidden font-sans ${isLargeFont ? 'text-lg' : 'text-base'}`}>
+    <div className={`w-screen h-[100dvh] flex flex-col bg-lab-950 text-slate-100 overflow-hidden font-sans ${isLargeFont ? 'text-lg' : 'text-base'}`}>
       {/* Top Navbar */}
       <Navbar
         activeMode={activeMode}

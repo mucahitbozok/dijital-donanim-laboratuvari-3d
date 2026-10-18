@@ -164,7 +164,53 @@ renderer.domElement.addEventListener('pointerup',up);renderer.domElement.addEven
 $('lbl').onclick=e=>{const on=e.target.getAttribute('aria-pressed')!='true';e.target.setAttribute('aria-pressed',on);e.target.textContent=on?'Etiketleri gizle':'Etiketleri göster';labels.forEach(l=>l.visible=on)};
 $('reset').onclick=()=>{slots.forEach(s=>s.userData.occ=null);parts.forEach(p=>{p.userData.slot=null;p.userData.target.copy(p.userData.home)});count();$('info').classList.remove('show')};
 
-(function loop(){requestAnimationFrame(loop);parts.forEach(p=>{if(p!==drag||!moved)p.position.lerp(p.userData.target,.2)});fans.forEach(f=>f.rotation.y+=.07);renderer.render(scene,camera)})();
+window.isAutoOrbit = false;
+(function loop(){
+    requestAnimationFrame(loop);
+    if(window.isAutoOrbit) {
+        th += 0.006;
+        cam();
+    }
+    parts.forEach(p=>{if(p!==drag||!moved)p.position.lerp(p.userData.target,.2)});
+    fans.forEach(f=>f.rotation.y+=.07);
+    renderer.render(scene,camera);
+})();
+
+window.parts = parts;
+window.slots = slots;
+window.autoAssemble = function() {
+    slots.forEach(s => {
+        const p = parts.find(part => part.userData.type === s.userData.type && !part.userData.slot);
+        if (p) {
+            s.userData.occ = p;
+            p.userData.slot = s;
+            p.userData.target.set(s.userData.x, s.userData.by, s.userData.z);
+        }
+    });
+    count();
+    toast('Harika! Anakartı eksiksiz tamamladın!', 'ok');
+};
+
+window.playSequentialAssembly = function() {
+    window.isAutoOrbit = true;
+    const order = ['cpu', 'cool', 'ram', 'ram', 'ssd', 'gpu', 'wifi', 'bat'];
+    order.forEach((type, index) => {
+        setTimeout(() => {
+            const part = parts.find(p => p.userData.type === type && !p.userData.slot);
+            const slot = slots.find(s => s.userData.type === type && !s.userData.occ);
+            if (part && slot) {
+                slot.userData.occ = part;
+                part.userData.slot = slot;
+                part.userData.target.set(slot.userData.x, slot.userData.by, slot.userData.z);
+                const n = count();
+                if (n === slots.length) {
+                    toast('Harika! Anakartı eksiksiz tamamladın!', 'ok');
+                }
+            }
+        }, index * 260);
+    });
+};
+
 </script>
 </body>
 </html>
