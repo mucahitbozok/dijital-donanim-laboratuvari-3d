@@ -11,7 +11,7 @@ import { QuizModal } from './components/QuizModal';
 import { AdminModal } from './components/AdminModal';
 import { AssemblySimulator } from './components/AssemblySimulator';
 
-import { Box, FileText } from 'lucide-react';
+import { Box, FileText, Wrench } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 1. Dataset State (Loaded from localStorage or defaults)
@@ -78,14 +78,20 @@ export const App: React.FC = () => {
         }}
       />
 
-      {/* Mobile Screen View Switcher (Visible only on mobile / small screens) */}
-      <div className="md:hidden flex items-center justify-between px-3 py-1.5 bg-lab-950/95 border-b border-zinc-800/80 z-20">
-        <div className="flex items-center gap-1.5 text-xs text-zinc-400 font-semibold truncate">
-          <span className="text-white font-bold">{activeHardware.name}</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-lab-850 text-zinc-300 border border-zinc-700/60">
-            {activeHardware.category}
-          </span>
-        </div>
+      {/* Mobile Screen View Switcher & Quick Navigation Bar */}
+      <div className="md:hidden flex items-center justify-between px-2.5 py-1.5 bg-lab-950/95 border-b border-zinc-800/80 z-20 gap-2">
+        {/* Prominent Anakartı Tamamla Mobile Shortcut */}
+        <button
+          onClick={() => {
+            soundService.playClick();
+            setActiveMode('assembly');
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition border shadow-sm flex-shrink-0 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40 active:scale-95"
+          title="Anakartı Tamamla! 3D Simülasyonu"
+        >
+          <Wrench className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Anakartı Tamamla!</span>
+        </button>
 
         <div className="flex items-center p-0.5 rounded-xl bg-lab-900 border border-zinc-800 flex-shrink-0">
           <button
@@ -93,7 +99,7 @@ export const App: React.FC = () => {
               setMobileTab('3d');
               setIsInfoPanelVisible(false);
             }}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
               !isInfoPanelVisible || mobileTab === '3d'
                 ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm'
                 : 'text-zinc-400 hover:text-white'
@@ -107,7 +113,7 @@ export const App: React.FC = () => {
               setIsInfoPanelVisible(true);
               setMobileTab('info');
             }}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
               isInfoPanelVisible && mobileTab === 'info'
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-sm'
                 : 'text-zinc-400 hover:text-white'
